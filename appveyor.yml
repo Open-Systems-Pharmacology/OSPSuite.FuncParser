@@ -1,16 +1,14 @@
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 environment:
-  major: 3
+  major: 4
   minor: 0
-  release: 1
+  release: 0
   app_version: '$(major).$(minor).$(release).$(APPVEYOR_BUILD_NUMBER)'
 
 version: '$(major).$(minor).$(release).{build}'
 
 build_script:
-  - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=Win32 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-  - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=Win32 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
@@ -29,7 +27,6 @@ after_build:
 
 test:
   assemblies:
-  - '**\*.Tests.Release.Win32.dll'
   - '**\*.Tests.Release.x64.dll'
 
 skip_commits:

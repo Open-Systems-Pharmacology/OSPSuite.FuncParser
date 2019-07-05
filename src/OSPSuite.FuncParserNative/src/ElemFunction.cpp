@@ -1,16 +1,8 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/ElemFunction.h"
 #include "FuncParser/FuncNode.h"
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/FuncParser.h"
 #include <time.h>
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
-#endif
 
 #ifdef linux
 #include <stdlib.h>

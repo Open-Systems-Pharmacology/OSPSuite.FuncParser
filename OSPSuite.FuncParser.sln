@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29020.237
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0ADFF0D4-C39C-4708-9E3D-B1AC75731689}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OSPSuite.FuncParser.Tests", "tests\OSPSuite.FuncParser.Tests\OSPSuite.FuncParser.Tests.vcxproj", "{F918EC05-F752-4593-9141-12926C9E9577}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OSPSuite.FuncParser", "src\OSPSuite.FuncParser\OSPSuite.FuncParser.vcxproj", "{D8A59174-5FB9-411C-B558-CFB76BDAD544}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OSPSuite.FuncParserNative", "src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj", "{2661A715-1870-403C-9563-5C3CDC31974A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,20 +30,20 @@ Global
 		{F918EC05-F752-4593-9141-12926C9E9577}.Release|Win32.Build.0 = Release|Win32
 		{F918EC05-F752-4593-9141-12926C9E9577}.Release|x64.ActiveCfg = Release|x64
 		{F918EC05-F752-4593-9141-12926C9E9577}.Release|x64.Build.0 = Release|x64
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Debug|Win32.Build.0 = Debug|Win32
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Debug|x64.ActiveCfg = Debug|x64
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Debug|x64.Build.0 = Debug|x64
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Release|Win32.ActiveCfg = Release|Win32
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Release|Win32.Build.0 = Release|Win32
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Release|x64.ActiveCfg = Release|x64
-		{D8A59174-5FB9-411C-B558-CFB76BDAD544}.Release|x64.Build.0 = Release|x64
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Debug|Win32.Build.0 = Debug|Win32
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Debug|x64.ActiveCfg = Debug|x64
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Debug|x64.Build.0 = Debug|x64
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Release|Win32.ActiveCfg = Release|Win32
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Release|Win32.Build.0 = Release|Win32
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Release|x64.ActiveCfg = Release|x64
+		{2661A715-1870-403C-9563-5C3CDC31974A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		VisualSVNWorkingCopyRoot = .
 		SolutionGuid = {CDF5644F-00DC-44EF-93DD-65E63726C186}
+		VisualSVNWorkingCopyRoot = .
 	EndGlobalSection
 EndGlobal

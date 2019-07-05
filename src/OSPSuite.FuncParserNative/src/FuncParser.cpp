@@ -1,7 +1,3 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/FuncParser.h"
 #include "FuncParser/ElemFunction.h"
 #include "FuncParser/Constant.h"
@@ -10,11 +6,6 @@
 #include "FuncParser/FuncNode.h"
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/Math.h"
-
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
-#endif
 
 #ifdef _WINDOWS
 #pragma warning( disable : 4996)

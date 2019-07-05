@@ -1,7 +1,3 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/Constants.h"
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/Constant.h"
@@ -9,10 +5,6 @@
 
 #ifdef _WINDOWS
 #include <math.h>
-#endif
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
 #endif
 
 namespace FuncParserNative

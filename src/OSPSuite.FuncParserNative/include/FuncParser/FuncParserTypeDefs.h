@@ -26,6 +26,8 @@ typedef std::vector < std::string >::iterator StringVectorIterator;
 
 typedef std::vector < double > DoubleVector;
 
+typedef std::vector < size_t > IndexVector;
+
 }//.. end "namespace FuncParserNative"
 
 

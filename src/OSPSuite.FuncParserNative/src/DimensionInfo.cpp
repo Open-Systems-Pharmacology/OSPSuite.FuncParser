@@ -1,14 +1,6 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/DimensionInfo.h"
 #include "FuncParser/ElemFunction.h"
 #include <assert.h>
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
-#endif
 
 namespace FuncParserNative
 {

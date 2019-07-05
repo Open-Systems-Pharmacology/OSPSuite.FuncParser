@@ -1,14 +1,6 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/DimensionParser.h"
 #include "FuncParser/ParsedFunction.h"
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
-#endif
 
 namespace FuncParserNative
 {

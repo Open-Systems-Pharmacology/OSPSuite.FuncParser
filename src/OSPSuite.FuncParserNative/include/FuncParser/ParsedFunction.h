@@ -32,7 +32,7 @@ class ParsedFunction
 		std::string m_StringToParse;
 		bool m_ParametersAvailable;
 		void ResetParsedState (bool SimplifiedStateOnly = false);
-		DoubleVector GetFixedParametersIndexList (FuncParserErrorData & ED);
+      IndexVector GetFixedParametersIndexVector (FuncParserErrorData & ED);
 		void SimplifyParameters (FuncParserErrorData & ED);
 		std::vector<std::string> ExtractQuantityNames(const std::vector<QuantityDimensionInfo> & quantityDimensions);
 

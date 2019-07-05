@@ -1,13 +1,5 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/StringHelper.h"
 #include <string>
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
-#endif
 
 namespace FuncParserNative
 {
@@ -23,6 +15,5 @@ std::string StringHelper::Capitalize (const std::string & pInString)
 	delete[] NewStr;
 	return newString;
 }
-
 
 }//.. end "namespace FuncParserNative"

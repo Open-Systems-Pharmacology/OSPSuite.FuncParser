@@ -1,17 +1,9 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/ParsedFunction.h"
 #include "FuncParser/FuncNode.h"
 #include "FuncParser/Math.h"
 #include "FuncParser/FuncParser.h"
 #include "FuncParser/StringHelper.h"
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
-#endif
 
 namespace FuncParserNative
 {
@@ -35,12 +27,12 @@ void ParsedFunction::ResetParsedState (bool SimplifiedStateOnly /*= false*/)
 	}
 }
 
-ParsedFunction::DoubleVector ParsedFunction::GetFixedParametersIndexList (FuncParserErrorData & ED)
+IndexVector ParsedFunction::GetFixedParametersIndexVector (FuncParserErrorData & ED)
 {
-	const std::string ERROR_SOURCE = "ParsedFunction::GetFixedParametersIndexList";
+	const std::string ERROR_SOURCE = "ParsedFunction::GetFixedParametersIndexVector";
 	ED.Clear();
 
-	DoubleVector IndexList;
+	IndexVector indexVector;
 
 	try
 	{
@@ -60,8 +52,8 @@ ParsedFunction::DoubleVector ParsedFunction::GetFixedParametersIndexList (FuncPa
 					//check if fixed parameter name was already set (caller has used some parameter name twice or more
 					//In this case: don't raise an error, just ignore it
 					bAlreadyUsed = false;
-					for(k=0; k<IndexList.size(); k++)
-						if(IndexList[k] == Index)
+					for(k=0; k<indexVector.size(); k++)
+						if(indexVector[k] == Index)
 						{
 							bAlreadyUsed = true;
 							break;
@@ -70,7 +62,7 @@ ParsedFunction::DoubleVector ParsedFunction::GetFixedParametersIndexList (FuncPa
 						break;
 
 					//Append an index of the fixed variable to the index list
-					IndexList.push_back(Index);
+					indexVector.push_back(Index);
 
 					break;
 				}
@@ -80,15 +72,15 @@ ParsedFunction::DoubleVector ParsedFunction::GetFixedParametersIndexList (FuncPa
 	catch(FuncParserErrorData & ED_)
 	{
 		ED = ED_;
-		IndexList.clear();
+		indexVector.clear();
 	}
 	catch(...)
 	{
 		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
-		IndexList.clear();
+		indexVector.clear();
 	}
 
-	return IndexList;
+	return indexVector;
 }
 
 void ParsedFunction::SimplifyParameters (FuncParserErrorData & ED)
@@ -98,7 +90,7 @@ void ParsedFunction::SimplifyParameters (FuncParserErrorData & ED)
 
 	try
 	{
-		DoubleVector IndexList;
+		IndexVector indexVector;
 		double Dummy;
 
 		if (!m_ParametersSimplified)
@@ -107,19 +99,19 @@ void ParsedFunction::SimplifyParameters (FuncParserErrorData & ED)
 			if (m_SimplifyParametersAllowed)
 			{
 				//get the indices of fixed parameters first
-				IndexList = GetFixedParametersIndexList(ED);
+				indexVector = GetFixedParametersIndexVector(ED);
 				if (ED.GetNumber() != FuncParserErrorData::err_OK)
 					return;
 
 				//simplify WITH parameter values
 				//if parameter values are not set by now, so NULL is passed as the last argument
 				//Node simplifying routine checks for this and ignores parameter values in this case
-				m_SimplifiedNode->SimplifyNode(Dummy, IndexList, m_ComparisonTolerance, m_ParameterValues);
+				m_SimplifiedNode->SimplifyNode(Dummy, indexVector, m_ComparisonTolerance, m_ParameterValues);
 			}
 			else
 			{
 				//simplify WITHOUT parameter values
-				m_SimplifiedNode->SimplifyNode(Dummy, IndexList, m_ComparisonTolerance);
+				m_SimplifiedNode->SimplifyNode(Dummy, indexVector, m_ComparisonTolerance);
 			}
 			m_ParametersSimplified = true;
 		}

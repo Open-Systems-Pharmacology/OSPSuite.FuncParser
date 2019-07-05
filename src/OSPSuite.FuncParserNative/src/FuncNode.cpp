@@ -1,17 +1,9 @@
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(push,off)
-#endif
-
 #include "FuncParser/FuncNode.h"
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/ElemFunction.h"
 #include "FuncParser/FuncParser.h"
 #include <deque>
 #include "FuncParser/ElemFunctions.h"
-
-#ifdef _WINDOWS_PRODUCTION
-#pragma managed(pop)
-#endif
 
 #ifdef _WINDOWS
 #pragma warning( disable : 4996)
@@ -287,7 +279,7 @@ const double FuncNode::CalcNodeValue (double * Args, double * Params, double Com
 	return 0; //just to avoid compile warning
 }
 
-bool FuncNode::SimplifyNode (double & NewValue, const DoubleVector & FixedParametersIndexList, double ComparisonTolerance, double * ParameterValues /*= NULL*/)
+bool FuncNode::SimplifyNode (double & NewValue, const IndexVector & FixedParametersIndexVector, double ComparisonTolerance, double * ParameterValues /*= NULL*/)
 {
 	const std::string ERROR_SOURCE = "FuncNode::SimplifyNode";
 
@@ -304,7 +296,7 @@ bool FuncNode::SimplifyNode (double & NewValue, const DoubleVector & FixedParame
 		{
 			//simplify argument node if available
 			if (m_VariableArgument != NULL)
-				m_VariableArgument->SimplifyNode(VarArgValue, FixedParametersIndexList, ComparisonTolerance, ParameterValues);
+				m_VariableArgument->SimplifyNode(VarArgValue, FixedParametersIndexVector, ComparisonTolerance, ParameterValues);
 
 			//variable node cannot be simplified
 			return false;
@@ -322,8 +314,8 @@ bool FuncNode::SimplifyNode (double & NewValue, const DoubleVector & FixedParame
 				return false;
 
 			//check if parameter may be simplified (is not fixed)
-			for(i=0; i<FixedParametersIndexList.size(); i++)
-				if (m_VarOrParamIndex == FixedParametersIndexList[i])
+			for(i=0; i<FixedParametersIndexVector.size(); i++)
+				if (m_VarOrParamIndex == FixedParametersIndexVector[i])
 					return false;
 
 			NewValue = ParameterValues[GetVarOrParamIndex()];
@@ -340,10 +332,10 @@ bool FuncNode::SimplifyNode (double & NewValue, const DoubleVector & FixedParame
 
 			assert(m_FirstOperand != NULL);
 
-			FirstNodeSimplified = m_FirstOperand->SimplifyNode(FirstOpValue, FixedParametersIndexList,
+			FirstNodeSimplified = m_FirstOperand->SimplifyNode(FirstOpValue, FixedParametersIndexVector,
 			                                                   ComparisonTolerance, ParameterValues);
 			if (m_SecondOperand != NULL)
-				SecondNodeSimplified = m_SecondOperand->SimplifyNode(SecondOpValue, FixedParametersIndexList,
+				SecondNodeSimplified = m_SecondOperand->SimplifyNode(SecondOpValue, FixedParametersIndexVector,
 				                                                     ComparisonTolerance, ParameterValues);
 			else
 				SecondNodeSimplified = true;
@@ -351,7 +343,7 @@ bool FuncNode::SimplifyNode (double & NewValue, const DoubleVector & FixedParame
 			if (m_BranchCondition != NULL)
 			{
 				double BranchConditionValue;
-				if (!m_BranchCondition->SimplifyNode(BranchConditionValue, FixedParametersIndexList,
+				if (!m_BranchCondition->SimplifyNode(BranchConditionValue, FixedParametersIndexVector,
 			                                         ComparisonTolerance, ParameterValues))
 			    	return false; //branch condition could not be simplified ==> cannot simplify node
 
@@ -484,7 +476,7 @@ bool FuncNode::SimplifyNode (double & NewValue, const DoubleVector & FixedParame
 					{
 						//both operands of the node must be simplified (const)
 						assert(pNode->GetSecondOperand()->GetNodeType() == NT_CONST);
-						pNode->SimplifyNode(SecondOpValue, FixedParametersIndexList, ComparisonTolerance, ParameterValues);
+						pNode->SimplifyNode(SecondOpValue, FixedParametersIndexVector, ComparisonTolerance, ParameterValues);
 						return false;
 					}
 				}
