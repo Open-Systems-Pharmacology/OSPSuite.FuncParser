@@ -29,7 +29,7 @@ class Constants
 	private:
 		typedef std::map < std::string , Constant * >::iterator ElemConstIterator ;
 		typedef std::map < std::string , Constant * >::const_iterator ElemConstIteratorConst ;
-		std::map < std::string , Constant * > m_ElemConstants;
+		std::map < std::string , Constant * > _elemConstants;
 	
 	public:
 		Constants ();

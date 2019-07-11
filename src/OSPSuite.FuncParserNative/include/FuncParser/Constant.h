@@ -10,8 +10,8 @@ namespace FuncParserNative
 class Constant
 {	
 	private:
-		std::string m_Name;
-		double m_Value;
+		std::string _name;
+		double _value;
 	
 	public:
 		Constant (const std::string & Name, double Value);

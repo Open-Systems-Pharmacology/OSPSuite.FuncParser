@@ -31,6 +31,7 @@
     <ClInclude Include="include\FuncParser\FuncParserTypeDefs.h" />
     <ClInclude Include="include\FuncParser\Math.h" />
     <ClInclude Include="include\FuncParser\ParsedFunction.h" />
+    <ClInclude Include="include\FuncParser\PInvokeHelper.h" />
     <ClInclude Include="include\FuncParser\QuantityDimensionInfo.h" />
     <ClInclude Include="include\FuncParser\StringHelper.h" />
   </ItemGroup>
@@ -49,6 +50,7 @@
     <ClCompile Include="src\FuncParserErrorData.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\ParsedFunction.cpp" />
+    <ClCompile Include="src\PInvokeHelper.cpp" />
     <ClCompile Include="src\QuantityDimensionInfo.cpp" />
     <ClCompile Include="src\StringHelper.cpp" />
   </ItemGroup>

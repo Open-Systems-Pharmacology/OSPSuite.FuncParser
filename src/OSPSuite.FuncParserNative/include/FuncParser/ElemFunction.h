@@ -61,10 +61,10 @@ class ElemFunction
 		};
 	
 	private:
-		enmElemFunctionType m_Type;
-		std::string m_FuncString;
-		bool m_IsLogical;
-		bool m_IsUnary;
+		enmElemFunctionType _type;
+		std::string _funcString;
+		bool _isLogical;
+		bool _isUnary;
 	
 	public:
 		ElemFunction (enmElemFunctionType pType, const std::string & pFuncString, bool pIsLogical, bool pIsUnary);

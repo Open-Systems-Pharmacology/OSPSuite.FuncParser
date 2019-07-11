@@ -11,8 +11,7 @@ class DimensionParser
 {
 public:
 	DimensionInfo GetDimensionInfoFor(const std::string & formula,
-		                              const std::vector<QuantityDimensionInfo> & quantityDimensions,
-									  FuncParserErrorData & ED);
+		                              const std::vector<QuantityDimensionInfo> & quantityDimensions);
 };
 
 }//.. end "namespace FuncParserNative"

@@ -6,18 +6,18 @@ namespace FuncParserNative
 
 Constant::Constant (const std::string & Name, double Value)
 {
-	m_Name = Name;
-	m_Value = Value;
+	_name = Name;
+	_value = Value;
 }
 
 const std::string & Constant::GetName () const
 {
-    return m_Name;
+    return _name;
 }
 
 const double Constant::GetValue () const
 {
-    return m_Value;
+    return _value;
 }
 
 }//.. end "namespace FuncParserNative"

@@ -29,14 +29,14 @@ class FuncNode
 	
 	private:
 		typedef std::vector < double > DoubleVector ;
-		int m_VarOrParamIndex;
-		FuncNode * m_FirstOperand;
-		FuncNode * m_SecondOperand;
-		FuncNode * m_BranchCondition;
-		double m_NodeValue;
-		ElemFunction * m_NodeFunction;
-		FuncNodeType m_NodeType;
-		FuncNode * m_VariableArgument;
+		int _varOrParamIndex;
+		FuncNode * _firstOperand;
+		FuncNode * _secondOperand;
+		FuncNode * _branchCondition;
+		double _nodeValue;
+		ElemFunction * _nodeFunction;
+		FuncNodeType _nodeType;
+		FuncNode * _variableArgument;
 		inline std::string Double2Str (double dValue);
 
 		DimensionInfo _dimensionInfo;
@@ -46,26 +46,26 @@ class FuncNode
 		FuncNode (const FuncNode * SourceNode);
 		~FuncNode ();
 		const int GetVarOrParamIndex () const;
-		void SetVarOrParamIndex (int p_NodeVariableIndex);
+		void SetVarOrParamIndex (int nodeVariableIndex);
 		FuncNode * GetFirstOperand () const;
-		void SetFirstOperand (FuncNode * p_FirstOperand);
+		void SetFirstOperand (FuncNode * firstOperand);
 		FuncNode * GetSecondOperand () const;
-		void SetSecondOperand (FuncNode * p_SecondOperand);
+		void SetSecondOperand (FuncNode * secondOperand);
 		FuncNode * GetBranchCondition ();
-		void SetBranchCondition (FuncNode * p_BranchCondition);
+		void SetBranchCondition (FuncNode * branchCondition);
 		FuncNode * GetVariableArgument () const;
-		void SetVariableArgument (FuncNode * p_VariableArgument);
+		void SetVariableArgument (FuncNode * variableArgument);
 		const double GetNodeValue () const;
-		void SetNodeValue (double p_NodeValue);
+		void SetNodeValue (double nodeValue);
 		ElemFunction * GetNodeFunction () const;
-		void SetNodeFunction (ElemFunction * p_NodeFunction);
+		void SetNodeFunction (ElemFunction * nodeFunction);
 		const FuncNodeType GetNodeType () const;
-		void SetNodeType (FuncNodeType p_NodeType);
+		void SetNodeType (FuncNodeType nodeType);
 		FuncNode * Clone ();
 		const double CalcNodeValue (double * Args, double * Params, double ComparisonTolerance);
 		bool SimplifyNode (double & NewValue, const IndexVector & FixedParametersIndexVector, double ComparisonTolerance, double * ParameterValues = NULL);
-		bool IsNumericNode (FuncParserErrorData & ED);
-		std::string XMLString (const std::vector < std::string > & VariableNames, const std::vector < std::string > & ParamNames, FuncParserErrorData & ED);
+		bool IsNumericNode ();
+		std::string XMLString (const std::vector < std::string > & VariableNames, const std::vector < std::string > & ParamNames);
 
 		void SetDimensionInfo(const QuantityDimensionInfo & quantityDimensionInfo,
  							  const std::vector < std::string > & VariableNames, 

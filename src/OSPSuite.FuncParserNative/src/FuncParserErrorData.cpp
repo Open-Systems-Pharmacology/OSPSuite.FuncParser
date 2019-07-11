@@ -5,67 +5,67 @@ namespace FuncParserNative
 
 FuncParserErrorData::FuncParserErrorData ()
 {
-	m_Number = err_OK;
-	m_Source = "";
-	m_Description = "";
+	_number = err_OK;
+	_source = "";
+	_description = "";
 }
 
 FuncParserErrorData::FuncParserErrorData (errNumber Number, const std::string & Source, const std::string & Description)
 {
-	m_Number = Number;
-	m_Source = Source;
-	m_Description = Description;
+	_number = Number;
+	_source = Source;
+	_description = Description;
 }
 
 const FuncParserErrorData::errNumber FuncParserErrorData::GetNumber () const
 {
-    return m_Number;
+    return _number;
 }
 
-void FuncParserErrorData::SetNumber (errNumber p_Number)
+void FuncParserErrorData::SetNumber (errNumber number)
 {
-    m_Number=p_Number;
+    _number=number;
 }
 
 const std::string FuncParserErrorData::GetSource () const
 {
-    return m_Source;
+    return _source;
 }
 
-void FuncParserErrorData::SetSource (const std::string & p_Source)
+void FuncParserErrorData::SetSource (const std::string & source)
 {
-    m_Source=p_Source;
+    _source=source;
 }
 
 const std::string FuncParserErrorData::GetDescription () const
 {
-    return m_Description;
+    return _description;
 }
 
-void FuncParserErrorData::SetDescription (const std::string & p_Description)
+void FuncParserErrorData::SetDescription (const std::string & description)
 {
-    m_Description=p_Description;
+    _description=description;
 }
 
 void FuncParserErrorData::operator = (const FuncParserErrorData & ED)
 {
-	m_Number = ED.GetNumber();
-	m_Description = ED.GetDescription();
-	m_Source = ED.GetSource();
+	_number = ED.GetNumber();
+	_description = ED.GetDescription();
+	_source = ED.GetSource();
 }
 
 void FuncParserErrorData::SetError (errNumber Number, const std::string & Source, const std::string & Description)
 {
-	m_Number = Number;
-	m_Description = Description;
-	m_Source = Source;
+	_number = Number;
+	_description = Description;
+	_source = Source;
 }
 
 void FuncParserErrorData::Clear ()
 {
-	m_Number = err_OK;
-	m_Description = "";
-	m_Source = "";
+	_number = err_OK;
+	_description = "";
+	_source = "";
 }
 
 

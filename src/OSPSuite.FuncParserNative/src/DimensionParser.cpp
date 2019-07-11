@@ -7,11 +7,10 @@ namespace FuncParserNative
 	using namespace std;
 
 	DimensionInfo DimensionParser::GetDimensionInfoFor(const string & formula,
-		                                               const vector<QuantityDimensionInfo> & quantityDimensions,
-													   FuncParserErrorData & ED)
+		                                               const vector<QuantityDimensionInfo> & quantityDimensions)
 	{
 		ParsedFunction pf;
-		return pf.GetDimensionInfoFor(formula, quantityDimensions, ED);
+		return pf.GetDimensionInfoFor(formula, quantityDimensions);
 	}
 
 }//.. end "namespace FuncParserNative"

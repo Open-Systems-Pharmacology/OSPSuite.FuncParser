@@ -114,7 +114,7 @@ std::string FuncParser::ParsedStringToDisplayString (const std::string & str)
 
 FuncParser::FuncParser ()
 {
-	m_ElemFunctions = ElemFunctions::GetInstance();
+	_elemFunctions = ElemFunctions::GetInstance();
 }
 
 FuncParser::~FuncParser ()
@@ -123,7 +123,7 @@ FuncParser::~FuncParser ()
 
 const Constants & FuncParser::GetConstants () const
 {
-    return m_Constants;
+    return _constants;
 }
 
 bool FuncParser::IsBracketed (const std::string & SubExpr)
@@ -161,7 +161,7 @@ void FuncParser::RemoveBrackets (std::string & SubExpr)
 	}
 }
 
-FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vector < std::string > & VariableNames, const std::vector < std::string > & ParameterNames, bool CaseSensitive, bool LogicOperatorsAllowed, double ComparisonTolerance, bool LogicalNumericMixAllowed, FuncParserErrorData & ED)
+FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vector < std::string > & VariableNames, const std::vector < std::string > & ParameterNames, bool CaseSensitive, bool LogicOperatorsAllowed, double ComparisonTolerance, bool LogicalNumericMixAllowed)
 {
 	FuncNode * newNode = NULL;
 	const std::string ERROR_SOURCE = "FuncParser::Parse";
@@ -169,7 +169,7 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 	try
 	{
 		//cache string to parse for using it in error message if parse fails
-		m_StringToParse = ParsedString;
+		_stringToParse = ParsedString;
 
 		//All checks of Parameter/Variable Names (different, not reserved functions, etc.) must
 		//be done before by caller (ParsedFunction)
@@ -185,8 +185,8 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 		std::string _ParsedString;
 
 		_ParsedString = ParsedString;
-		m_VariableNames = VariableNames;
-		m_ParameterNames = ParameterNames;
+		_variableNames = VariableNames;
+		_parameterNames = ParameterNames;
 
 		//count brackets
 		long BracketsCount = 0;
@@ -209,17 +209,15 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 		//if NOT case sensitive: convert parsing string and all variables/parameters to upper case
 		if (!CaseSensitive)
 		{
-			for (i=0; i<m_VariableNames.size(); i++)
-				m_VariableNames[i] = ToUpper(m_VariableNames[i]);
-			for (i=0; i<m_ParameterNames.size(); i++)
-				m_ParameterNames[i] = ToUpper(m_ParameterNames[i]);
+			for (i=0; i<_variableNames.size(); i++)
+				_variableNames[i] = ToUpper(_variableNames[i]);
+			for (i=0; i<_parameterNames.size(); i++)
+				_parameterNames[i] = ToUpper(_parameterNames[i]);
 			_ParsedString = ToUpper(_ParsedString);
 		}
 
 		//check if variable/parameter names are valid
-		CheckVarParamNames(m_VariableNames, m_ParameterNames, ED);
-		if(ED.GetNumber() != FuncParserErrorData::err_OK)
-			throw FuncParserErrorData(ED);
+		CheckVarParamNames(_variableNames, _parameterNames);
 
 		//replace logical operators "AND", "OR", "NOT" with predefined symbols
 		NOTPreDelimiter.push_back(" ");
@@ -289,16 +287,12 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 		//create new func node
 		newNode = new FuncNode;
 
-		EvalExpression(newNode, _ParsedString, LOA_IF, ED);
-		if(ED.GetNumber() != FuncParserErrorData::err_OK)
-			throw FuncParserErrorData(ED);
+		EvalExpression(newNode, _ParsedString, LOA_IF);
 
 		//check if numeric/logical operators are not illegally mixed
 		if(LogicOperatorsAllowed && !LogicalNumericMixAllowed)
 		{
-			newNode->IsNumericNode(ED);
-			if(ED.GetNumber() != FuncParserErrorData::err_OK)
-				throw FuncParserErrorData(ED);
+			newNode->IsNumericNode(); //will throw Funcparser exception in case of unallowed mix
 		}
 
 		//no simplifying here!
@@ -307,14 +301,14 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 //		double Dummy;
 //		newNode->SimplifyNode(Dummy, ComparisonTolerance);
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData &)
 	{
 		if (newNode != NULL)
 		{
 			delete newNode;
 			newNode = NULL;
 		}
-		ED = ED_;
+      throw;
 	}
 	catch(...)
 	{
@@ -323,13 +317,13 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 			delete newNode;
 			newNode = NULL;
 		}
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+      throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 
 	return newNode;
 }
 
-void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLevelOfAbstraction LevelOfAbstraction, FuncParserErrorData & ED)
+void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLevelOfAbstraction LevelOfAbstraction)
 {
 	const char * ERROR_SOURCE = "FuncParser::EvalExpression";
 
@@ -340,7 +334,7 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 		enmLevelOfAbstraction NextLevelOfAbstraction; //
 
 		bool FirstTerm = true;
-		long FirstPos = 0;
+		size_t FirstPos = 0;
 		std::string NewOp;
 		std::string NextTerm;
 
@@ -349,56 +343,47 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 		else
 			if (IsBracketed(SubExpr))
 			{
-				EvalExpression(SubNode, SubExpr, LOA_IF, ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK) return;
+				EvalExpression(SubNode, SubExpr, LOA_IF);
 				return;
 			}
 
 		switch(LevelOfAbstraction)
 		{
 			case LOA_IF:
-				EvalIF(SubNode, SubExpr, ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK) return;
+				EvalIF(SubNode, SubExpr);
 				return;
-				break;
 			case LOA_OR:
-				EF1 = (*m_ElemFunctions)[ElemFunction::EF_OR];
+				EF1 = (*_elemFunctions)[ElemFunction::EF_OR];
 				EF2 = EF1;
 				NextLevelOfAbstraction = LOA_AND;
 				break;
 			case LOA_AND:
-				EF1 = (*m_ElemFunctions)[ElemFunction::EF_AND];
+				EF1 = (*_elemFunctions)[ElemFunction::EF_AND];
 				EF2 = EF1;
 				NextLevelOfAbstraction = LOA_NOT;
 				break;
 			case LOA_NOT:
-				EvalNOTOperand(SubNode, SubExpr, ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK) return;
+				EvalNOTOperand(SubNode, SubExpr);
 				return;
-				break;
 			case LOA_Comparison:
-				EvalComparison(SubNode, SubExpr, ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK) return;
+				EvalComparison(SubNode, SubExpr);
 				return;
-				break;
 			case LOA_PLUSMINUS:
-				EF1 = (*m_ElemFunctions)[ElemFunction::EF_PLUS];
-				EF2 = (*m_ElemFunctions)[ElemFunction::EF_MINUS];
+				EF1 = (*_elemFunctions)[ElemFunction::EF_PLUS];
+				EF2 = (*_elemFunctions)[ElemFunction::EF_MINUS];
 				NextLevelOfAbstraction = LOA_MULDIV;
 				//replace expression beginning with - (e.g. -2*x+3) with 0-<old expr.>
 				if (SubExpr.substr(0,1) == "-")
 					SubExpr = "0"+SubExpr;
 				break;
 			case LOA_MULDIV:
-				EF1 = (*m_ElemFunctions)[ElemFunction::EF_MUL];
-				EF2 = (*m_ElemFunctions)[ElemFunction::EF_DIV];
+				EF1 = (*_elemFunctions)[ElemFunction::EF_MUL];
+				EF2 = (*_elemFunctions)[ElemFunction::EF_DIV];
 				NextLevelOfAbstraction = LOA_FACTOR;
 				break;
 			case LOA_FACTOR:
-				EvalFactor(SubNode, SubExpr, ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK) return;
+				EvalFactor(SubNode, SubExpr);
 				return;
-				break;
 		}
 
 		assert (EF1 && EF2);
@@ -408,33 +393,25 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 
 		if ((LevelOfAbstraction == LOA_PLUSMINUS) || (LevelOfAbstraction == LOA_MULDIV))
 		{
-			RearrangeTerms(SubExpr, LevelOfAbstraction, Op1, Op2, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			RearrangeTerms(SubExpr, LevelOfAbstraction, Op1, Op2);
 		}
 
 		while(1)
 		{
 			// get next term
-			NextTerm = GetNextTerm(SubExpr, LevelOfAbstraction, Op1, Op2, FirstPos, NewOp, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			NextTerm = GetNextTerm(SubExpr, LevelOfAbstraction, Op1, Op2, FirstPos, NewOp);
 
 			if (NewOp == "")
 			{
 				// last term found
 				if (FirstTerm)
 				{
-					EvalExpression(SubNode, SubExpr, NextLevelOfAbstraction, ED);
-					if (ED.GetNumber() != FuncParserErrorData::err_OK)
-						return;
+					EvalExpression(SubNode, SubExpr, NextLevelOfAbstraction);
 				}
 				else
 				{
 					SubNode->SetSecondOperand(new FuncNode);
-					EvalExpression(SubNode->GetSecondOperand(), NextTerm, NextLevelOfAbstraction, ED);
-					if (ED.GetNumber() != FuncParserErrorData::err_OK)
-						return;
+					EvalExpression(SubNode->GetSecondOperand(), NextTerm, NextLevelOfAbstraction);
 				}
 				return;
 			}
@@ -446,9 +423,7 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 					SubNode->SetNodeType(FuncNode::NT_FUNCTION);
                     SubNode->SetNodeFunction(NewOp==Op1 ? EF1 : EF2);
 					SubNode->SetFirstOperand(new FuncNode);
-					EvalExpression(SubNode->GetFirstOperand(), NextTerm, NextLevelOfAbstraction, ED);
-					if (ED.GetNumber() != FuncParserErrorData::err_OK)
-						return;
+					EvalExpression(SubNode->GetFirstOperand(), NextTerm, NextLevelOfAbstraction);
 				}
 				else
 				{
@@ -460,30 +435,29 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
                     NewOp = SubNode->GetNodeFunction()->GetFuncString();
 
 					SubNode->SetFirstOperand(new FuncNode);
-					EvalExpression(SubNode->GetFirstOperand(), NextTerm, NextLevelOfAbstraction, ED);
-					if (ED.GetNumber() != FuncParserErrorData::err_OK)
-						return;
+					EvalExpression(SubNode->GetFirstOperand(), NextTerm, NextLevelOfAbstraction);
 				}
 			}
 		}
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData & ED)
 	{
-		ED = ED_;
 		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
 		{
+         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
 			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + m_StringToParse + "'");
+			                  "\n"+"String to parse: '" + _stringToParse + "'");
 		}
+      throw ED;
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 
 }
 
-void FuncParser::EvalNOTOperand (FuncNode * SubNode, std::string SubExpr, FuncParserErrorData & ED)
+void FuncParser::EvalNOTOperand (FuncNode * SubNode, std::string SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalNOTOperand";
 
@@ -492,34 +466,31 @@ void FuncParser::EvalNOTOperand (FuncNode * SubNode, std::string SubExpr, FuncPa
 		if (SubExpr.substr(0,1) == conNOTSymbol)
 		{
 			SubNode->SetNodeType(FuncNode::NT_FUNCTION);
-            SubNode->SetNodeFunction((*m_ElemFunctions)[ElemFunction::EF_NOT]);
+            SubNode->SetNodeFunction((*_elemFunctions)[ElemFunction::EF_NOT]);
 			SubNode->SetFirstOperand(new FuncNode);
-			EvalExpression(SubNode->GetFirstOperand(), SubExpr.substr(1), LOA_Comparison, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			EvalExpression(SubNode->GetFirstOperand(), SubExpr.substr(1), LOA_Comparison);
 			return;
 		}
 
-		EvalExpression(SubNode, SubExpr, LOA_Comparison, ED);
-		if (ED.GetNumber() != FuncParserErrorData::err_OK)
-			return;
+		EvalExpression(SubNode, SubExpr, LOA_Comparison);
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData & ED)
 	{
-		ED = ED_;
 		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
 		{
+         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
 			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + m_StringToParse + "'");
+			                  "\n"+"String to parse: '" + _stringToParse + "'");
+         throw ED;
 		}
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 }
 
-void FuncParser::EvalComparison (FuncNode * SubNode, std::string SubExpr, FuncParserErrorData & ED)
+void FuncParser::EvalComparison (FuncNode * SubNode, std::string SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalComparison";
 
@@ -529,7 +500,7 @@ void FuncParser::EvalComparison (FuncNode * SubNode, std::string SubExpr, FuncPa
         unsigned int i;
 		std::string NextCharacter;
 		std::string SubSubExpr;
-		long FirstOperandLastPosition, SecondOperandFirstPosition;
+		size_t FirstOperandLastPosition, SecondOperandFirstPosition;
 
 		if (SubExpr.length() == 0)
 			throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
@@ -570,47 +541,42 @@ void FuncParser::EvalComparison (FuncNode * SubNode, std::string SubExpr, FuncPa
 
 				std::string FuncString = SubExpr.substr(FirstOperandLastPosition + 1,
         		                                        SecondOperandFirstPosition - FirstOperandLastPosition - 1);
-        		SubNode->SetNodeFunction((*m_ElemFunctions)[FuncString]);
+        		SubNode->SetNodeFunction((*_elemFunctions)[FuncString]);
         		assert(SubNode->GetNodeFunction()!=NULL);
 
 				SubNode->SetFirstOperand(new FuncNode);
 				SubNode->SetSecondOperand(new FuncNode);
 
 				EvalExpression(SubNode->GetFirstOperand(), SubExpr.substr(0, FirstOperandLastPosition+1),
-				               LOA_PLUSMINUS, ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK)
-					return;
+				               LOA_PLUSMINUS);
 
 				EvalExpression(SubNode->GetSecondOperand(), SubExpr.substr(SecondOperandFirstPosition),
-				               LOA_PLUSMINUS, ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK)
-					return;
+				               LOA_PLUSMINUS);
 
 				return;
            }
 		}
 
-		EvalExpression(SubNode, SubExpr, LOA_PLUSMINUS, ED);
-		if (ED.GetNumber() != FuncParserErrorData::err_OK)
-			return;
+		EvalExpression(SubNode, SubExpr, LOA_PLUSMINUS);
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData & ED)
 	{
-		ED = ED_;
 		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
 		{
+         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
 			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + m_StringToParse + "'");
+			                  "\n"+"String to parse: '" + _stringToParse + "'");
+         throw ED;
 		}
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 
 }
 
-void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParserErrorData & ED)
+void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalFactor";
 
@@ -628,7 +594,7 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 
 		if (IsBracketed(SubExpr)) //'(<Expr.>) -> 'Expression'
 		{
-			EvalExpression(SubNode, SubExpr, LOA_IF, ED);
+			EvalExpression(SubNode, SubExpr, LOA_IF);
 			return;
 		}
 
@@ -663,22 +629,18 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 			if (BracketsCount == 0) //so a^b^c will be evaluated as a^(b^c)
 			{
 				SubNode->SetNodeType(FuncNode::NT_FUNCTION);
-                SubNode->SetNodeFunction((*m_ElemFunctions)[ElemFunction::EF_POWER]);
+                SubNode->SetNodeFunction((*_elemFunctions)[ElemFunction::EF_POWER]);
 				SubNode->SetFirstOperand(new FuncNode);
 				SubNode->SetSecondOperand(new FuncNode);
-				EvalFactor(SubNode->GetFirstOperand(), SubExpr.substr(0, CharPos), ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK)
-					return;
-				EvalFactor(SubNode->GetSecondOperand(), SubExpr.substr(CharPos+1), ED);
-				if (ED.GetNumber() != FuncParserErrorData::err_OK)
-					return;
+				EvalFactor(SubNode->GetFirstOperand(), SubExpr.substr(0, CharPos));
+				EvalFactor(SubNode->GetSecondOperand(), SubExpr.substr(CharPos+1));
 				return;
 			}
 		}
 
 		//check if variable
-		for (i=0; i<m_VariableNames.size(); i++)
-			if (m_VariableNames[i] == SubExpr)
+		for (i=0; i<_variableNames.size(); i++)
+			if (_variableNames[i] == SubExpr)
 			{
 				SubNode->SetNodeType(FuncNode::NT_VARIABLE);
 				SubNode->SetVarOrParamIndex(i);
@@ -693,9 +655,9 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 			{
 				VarName = SubExpr.substr(0,CharPos);
 
-				for (i=0; i<m_VariableNames.size(); i++)
+				for (i=0; i<_variableNames.size(); i++)
 				{
-					if (m_VariableNames[i] == VarName)
+					if (_variableNames[i] == VarName)
 					{
 						//set node type VARIABLE
 						SubNode->SetNodeType(FuncNode::NT_VARIABLE);
@@ -703,10 +665,7 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 
 						//read variable argument
 						SubNode->SetVariableArgument(new FuncNode);
-						EvalExpression(SubNode->GetVariableArgument(), SubExpr.substr(CharPos+1,SubExpr.length()-CharPos-2), LOA_IF, ED);
-
-						if (ED.GetNumber() != FuncParserErrorData::err_OK)
-							return;
+						EvalExpression(SubNode->GetVariableArgument(), SubExpr.substr(CharPos+1,SubExpr.length()-CharPos-2), LOA_IF);
 
 						return;
 					}
@@ -715,8 +674,8 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 		}
 
 		//check if parameter
-		for (i=0; i<m_ParameterNames.size(); i++)
-			if (m_ParameterNames[i] == SubExpr)
+		for (i=0; i<_parameterNames.size(); i++)
+			if (_parameterNames[i] == SubExpr)
 			{
 				SubNode->SetNodeType(FuncNode::NT_PARAMETER);
 				SubNode->SetVarOrParamIndex(i);
@@ -725,10 +684,10 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 
 		//Check, if constant
 		//Comparison with constants are NOT case sensitive, so PI, Pi, pi are all accepted
-		if (m_Constants.Exists(ToUpper(SubExpr)))
+		if (_constants.Exists(ToUpper(SubExpr)))
 		{
 			SubNode->SetNodeType(FuncNode::NT_CONST);
-			SubNode->SetNodeValue(m_Constants[ToUpper(SubExpr)]->GetValue());
+			SubNode->SetNodeValue(_constants[ToUpper(SubExpr)]->GetValue());
 			return;
 		}
 
@@ -750,7 +709,7 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 			                          "Invalid Expression");
 
 		FuncName = ToUpper(SubExpr.substr(0,CharPos));
-		ElemFunction * pElemFunc = (*m_ElemFunctions)[FuncName];
+		ElemFunction * pElemFunc = (*_elemFunctions)[FuncName];
 		if (pElemFunc == NULL)
 			throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
 			                          "Unknown function: "+FuncName);
@@ -781,23 +740,17 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 		    (pElemFunc->GetType() == ElemFunction::EF_POWER_F) )
 		{
 			std::string FirstArg, SecondArg, Rest, NewOp;
-			long FirstPos = 0;
+			size_t FirstPos = 0;
 			std::string ArgList = SubExpr.substr(CharPos+1,SubExpr.length()-CharPos-2);
 
 			//get first argument
-			FirstArg = GetNextTerm(ArgList, LOA_FACTOR, conListDelimiter, conListDelimiter, FirstPos, NewOp, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			FirstArg = GetNextTerm(ArgList, LOA_FACTOR, conListDelimiter, conListDelimiter, FirstPos, NewOp);
 
 			//get second argument
-			SecondArg = GetNextTerm(ArgList, LOA_FACTOR, conListDelimiter, conListDelimiter, FirstPos, NewOp, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			SecondArg = GetNextTerm(ArgList, LOA_FACTOR, conListDelimiter, conListDelimiter, FirstPos, NewOp);
 
 			//get the rest of arguments list (just to be sure it's empty
-			Rest = GetNextTerm(ArgList, LOA_FACTOR, conListDelimiter, conListDelimiter, FirstPos, NewOp, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			Rest = GetNextTerm(ArgList, LOA_FACTOR, conListDelimiter, conListDelimiter, FirstPos, NewOp);
 
 			//check exactly 2 operands are given
 			if ((FirstArg.length() == 0) || (SecondArg.length() == 0) || (Rest.length() > 0))
@@ -806,17 +759,13 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 
 			//setup node and 2 operands
 			SubNode->SetNodeType(FuncNode::NT_FUNCTION);
-			SubNode->SetNodeFunction((*m_ElemFunctions)[FuncName]);
+			SubNode->SetNodeFunction((*_elemFunctions)[FuncName]);
 
 			SubNode->SetFirstOperand(new FuncNode);
-			EvalExpression(SubNode->GetFirstOperand(), FirstArg, LOA_IF, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			EvalExpression(SubNode->GetFirstOperand(), FirstArg, LOA_IF);
 
 			SubNode->SetSecondOperand(new FuncNode);
-			EvalExpression(SubNode->GetSecondOperand(), SecondArg, LOA_IF, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			EvalExpression(SubNode->GetSecondOperand(), SecondArg, LOA_IF);
 
 			return;
 		}
@@ -827,29 +776,28 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr, FuncParser
 			                          "Standard elementary functions must be numeric and unary (\""+FuncName+"\")");
 
 		SubNode->SetNodeType(FuncNode::NT_FUNCTION);
-		SubNode->SetNodeFunction((*m_ElemFunctions)[FuncName]);
+		SubNode->SetNodeFunction((*_elemFunctions)[FuncName]);
 		SubNode->SetFirstOperand(new FuncNode);
-		EvalExpression(SubNode->GetFirstOperand(), SubExpr.substr(CharPos+1,SubExpr.length()-CharPos-2), LOA_IF, ED);
-		if (ED.GetNumber() != FuncParserErrorData::err_OK)
-			return;
+		EvalExpression(SubNode->GetFirstOperand(), SubExpr.substr(CharPos+1,SubExpr.length()-CharPos-2), LOA_IF);
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData & ED)
 	{
-		ED = ED_;
 		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
 		{
+         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
 			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + m_StringToParse + "'");
+			                  "\n"+"String to parse: '" + _stringToParse + "'");
+         throw ED;
 		}
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 
 }
 
-void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr, FuncParserErrorData & ED)
+void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalIF";
 	const std::string Op1 = "?";
@@ -858,23 +806,22 @@ void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr, FuncParserErro
 	try
 	{
 		std::string IfStatement, ThenStatement, ElseStatement;
-		long FirstPos = 0;
+		size_t FirstPos = 0;
 		std::string NewOp;
 
-		IfStatement = GetNextTerm(SubExpr, LOA_IF, Op1, Op1, FirstPos,NewOp, ED);
-		if (ED.GetNumber() != FuncParserErrorData::err_OK) return;
+		IfStatement = GetNextTerm(SubExpr, LOA_IF, Op1, Op1, FirstPos,NewOp);
 
 		if (NewOp == "") //no "?" found ==> not an if..then..else
 		{
-			EvalExpression(SubNode, SubExpr, LOA_OR, ED);
+			EvalExpression(SubNode, SubExpr, LOA_OR);
 			return;
 		}
 
 		//"?" found - check if subexpression has form a ? b : c
-		ThenStatement = GetNextTerm(SubExpr, LOA_IF, Op2, Op2, FirstPos,NewOp, ED);
+		ThenStatement = GetNextTerm(SubExpr, LOA_IF, Op2, Op2, FirstPos,NewOp);
 
 		if (NewOp != "")
-			ElseStatement = GetNextTerm(SubExpr, LOA_IF, Op1, Op2, FirstPos,NewOp, ED);
+			ElseStatement = GetNextTerm(SubExpr, LOA_IF, Op1, Op2, FirstPos,NewOp);
 
 		//check if subexpression is correct
 		if ((IfStatement == "") || (ThenStatement == "") || (ElseStatement == "") || (NewOp != ""))
@@ -883,40 +830,33 @@ void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr, FuncParserErro
 
 		//everything OK - populate node
 		SubNode->SetNodeType(FuncNode::NT_FUNCTION);
-        SubNode->SetNodeFunction((*m_ElemFunctions)[ElemFunction::EF_IF]);
+        SubNode->SetNodeFunction((*_elemFunctions)[ElemFunction::EF_IF]);
 		SubNode->SetFirstOperand(new FuncNode);
 		SubNode->SetSecondOperand(new FuncNode);
 		SubNode->SetBranchCondition(new FuncNode);
 
-		EvalExpression(SubNode->GetBranchCondition(), IfStatement, LOA_IF, ED);
-		if (ED.GetNumber() != FuncParserErrorData::err_OK)
-			return;
-
-		EvalExpression(SubNode->GetFirstOperand(), ThenStatement, LOA_IF, ED);
-		if (ED.GetNumber() != FuncParserErrorData::err_OK)
-			return;
-
-		EvalExpression(SubNode->GetSecondOperand(), ElseStatement, LOA_IF, ED);
-		if (ED.GetNumber() != FuncParserErrorData::err_OK)
-			return;
+		EvalExpression(SubNode->GetBranchCondition(), IfStatement, LOA_IF);
+		EvalExpression(SubNode->GetFirstOperand(), ThenStatement, LOA_IF);
+		EvalExpression(SubNode->GetSecondOperand(), ElseStatement, LOA_IF);
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData & ED)
 	{
-		ED = ED_;
 		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
 		{
+         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
 			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + m_StringToParse + "'");
+			                  "\n"+"String to parse: '" + _stringToParse + "'");
+         throw ED;
 		}
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 
 }
 
-void FuncParser::CheckVarParamNames (const std::vector < std::string > & VariableNames, const std::vector < std::string > & ParameterNames, FuncParserErrorData & ED)
+void FuncParser::CheckVarParamNames (const std::vector < std::string > & VariableNames, const std::vector < std::string > & ParameterNames)
 {
 	const std::string ERROR_SOURCE = "FuncParser::CheckVarParamNames";
 
@@ -949,16 +889,16 @@ void FuncParser::CheckVarParamNames (const std::vector < std::string > & Variabl
 				                          "Variable name may not be a logical operator ('"+VarName+"')\n");
 
 			//check if var_i<>ElemFunction_k
-			if(m_ElemFunctions->Exists(VarToUpper))
+			if(_elemFunctions->Exists(VarToUpper))
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Variable name must be different from all standard functions ('"+VarName+"')\n"+
-				                          "Available standard functions are: "+m_ElemFunctions->GetList());
+				                          "Available standard functions are: "+_elemFunctions->GetList());
 
 			//check if var_i<>ElemConst_k
-			if(m_Constants.Exists(VarToUpper))
+			if(_constants.Exists(VarToUpper))
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Variable name must be different from all standard constants ('"+VarName+"')\n"+
-				                          "Available standard constants are: "+m_Constants.GetList());
+				                          "Available standard constants are: "+_constants.GetList());
 
 			//check if variable name is not numeric
 			if(IsNumeric(VarName))
@@ -994,16 +934,16 @@ void FuncParser::CheckVarParamNames (const std::vector < std::string > & Variabl
 				                          "Parameter name may not be a logical operator ('"+ParamName+"')\n");
 
 			//check if param_i<>ElemFunction_k
-			if(m_ElemFunctions->Exists(VarToUpper))
+			if(_elemFunctions->Exists(VarToUpper))
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Parameter name must be different from all standard functions ('"+ParamName+"')\n"+
-				                          "Available standard functions are: "+m_ElemFunctions->GetList());
+				                          "Available standard functions are: "+_elemFunctions->GetList());
 
 			//check if param_i<>ElemConst_k
-			if(m_Constants.Exists(VarToUpper))
+			if(_constants.Exists(VarToUpper))
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Parameter name must be different from all standard constants ('"+ParamName+"')\n"+
-				                          "Available standard constants are: "+m_Constants.GetList());
+				                          "Available standard constants are: "+_constants.GetList());
 
 			//check if variable name is not numeric
 			if(IsNumeric(ParamName))
@@ -1026,17 +966,17 @@ void FuncParser::CheckVarParamNames (const std::vector < std::string > & Variabl
 					                          "Variable and parameter have the same name ('"+VariableNames[i]+"')");
 
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData &)
 	{
-		ED = ED_;
+      throw;
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 }
 
-bool FuncParser::IsScientificNumber (const std::string & SubExpr, long OpPos)
+bool FuncParser::IsScientificNumber (const std::string & SubExpr, size_t OpPos)
 {
     if ((OpPos>=2) && (OpPos<=(long)SubExpr.length()-2))
 	{
@@ -1087,7 +1027,7 @@ bool FuncParser::IsScientificNumber (const std::string & SubExpr, long OpPos)
 		return false;
 }
 
-void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, std::string Op1, std::string Op2, FuncParserErrorData & ED)
+void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, std::string Op1, std::string Op2)
 {
 	const char * ERROR_SOURCE = "FuncParser::RearrangeTerms";
 
@@ -1096,7 +1036,7 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
 		std::vector<std::string> Op1_Terms;
 		std::vector<std::string> Op2_Terms;
 		std::string NextTerm;
-		long FirstPos = 0;
+		size_t FirstPos = 0;
 		std::string NewOp, PreviousOp;
 		bool FirstTerm = true;
         size_t i;
@@ -1104,9 +1044,7 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
 		// parse expression and put the terms in 2 lists depending on their operand
 		while(1)
 		{
-			NextTerm = GetNextTerm(SubExpr, LevelOfAbstraction, Op1, Op2, FirstPos, NewOp, ED);
-			if (ED.GetNumber() != FuncParserErrorData::err_OK)
-				return;
+			NextTerm = GetNextTerm(SubExpr, LevelOfAbstraction, Op1, Op2, FirstPos, NewOp);
 
 			if (FirstTerm)
 			{
@@ -1157,22 +1095,23 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
 		if(!SingleOp2)
 			SubExpr += ")";
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData & ED)
 	{
-		ED = ED_;
 		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
 		{
+         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
 			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + m_StringToParse + "'");
+			                  "\n"+"String to parse: '" + _stringToParse + "'");
+         throw ED;
 		}
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 }
 
-std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, std::string Op1, std::string Op2, long & FirstPos, std::string & NewOp, FuncParserErrorData & ED)
+std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, std::string Op1, std::string Op2, size_t & FirstPos, std::string & NewOp)
 {
 	// ______________________________________________________________________________________________________________________________
 	// Parses the string <SubExpr> starting at <FirstPos> till <Op1> or <Op2> is found (or the end of the string is reached)
@@ -1190,7 +1129,7 @@ std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbst
 
 	try
 	{
-		long LastPos = FirstPos;   //index of the next character to be analyzed
+		size_t LastPos = FirstPos;   //index of the next character to be analyzed
 		long BracketsCount = 0;    // No. of brackets in the expression
 		std::string NextCharacter; // next char to be investigated
 
@@ -1249,18 +1188,19 @@ std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbst
 		// let <FirstPos> point to the 1st character of the next term (required for the next call)
 		FirstPos = LastPos + 1;
 	}
-	catch(FuncParserErrorData & ED_)
+	catch(FuncParserErrorData & ED)
 	{
-		ED = ED_;
 		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
 		{
+         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
 			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + m_StringToParse + "'");
+			                  "\n"+"String to parse: '" + _stringToParse + "'");
+         throw ED;
 		}
 	}
 	catch(...)
 	{
-		ED.SetError(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
+		throw FuncParserErrorData(FuncParserErrorData::err_RUNTIME, ERROR_SOURCE, "Unknown error");
 	}
 
 	// return found term

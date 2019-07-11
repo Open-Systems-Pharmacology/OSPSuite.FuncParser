@@ -7,67 +7,96 @@
 namespace FuncParserNative
 {
 
-class FuncNode;
-class FuncParserErrorData;
+   class FuncNode;
+   class FuncParserErrorData;
 
-class ParsedFunction
-{	
-	private:
-		typedef std::vector < std::string > StringVector ;
-		typedef std::vector < std::string >::iterator StringVectorIterator ;
-		typedef std::vector < double > DoubleVector ;
-		FuncNode * m_FuncNode;
-		FuncNode * m_SimplifiedNode;
-		bool m_CaseSensitive;
-		StringVector m_VariableNames;
-		StringVector m_ParameterNames;
-		StringVector m_FixedParameters;
-		double * m_ParameterValues;
-		bool m_SimplifyParametersAllowed;
-		bool m_LogicOperatorsAllowed;
-		bool m_LogicalNumericMixAllowed;
-		bool m_Parsed;
-		double m_ComparisonTolerance;
-		bool m_ParametersSimplified;
-		std::string m_StringToParse;
-		bool m_ParametersAvailable;
-		void ResetParsedState (bool SimplifiedStateOnly = false);
-      IndexVector GetFixedParametersIndexVector (FuncParserErrorData & ED);
-		void SimplifyParameters (FuncParserErrorData & ED);
-		std::vector<std::string> ExtractQuantityNames(const std::vector<QuantityDimensionInfo> & quantityDimensions);
+   class ParsedFunction
+   {
+   private:
+      //		typedef std::vector < std::string > StringVector ;
+      //		typedef std::vector < std::string >::iterator StringVectorIterator ;
+      //		typedef std::vector < double > DoubleVector ;
+      FuncNode* _funcNode;
+      FuncNode* _simplifiedNode;
+      bool _caseSensitive;
+      StringVector _variableNames;
+      StringVector _parameterNames;
+      StringVector _fixedParameters;
+      double* _parameterValues;
+      bool _simplifyParametersAllowed;
+      bool _logicOperatorsAllowed;
+      bool _logicalNumericMixAllowed;
+      bool _parsed;
+      double _comparisonTolerance;
+      bool _parametersSimplified;
+      std::string _stringToParse;
+      bool _parametersAvailable;
+      void ResetParsedState(bool simplifiedStateOnly = false);
+      IndexVector GetFixedParametersIndexVector(void);
+      void SimplifyParameters();
+      std::vector<std::string> ExtractQuantityNames(const std::vector<QuantityDimensionInfo>& quantityDimensions);
 
-	public:
-		FUNCPARSER_EXPORT ParsedFunction ();
-		FUNCPARSER_EXPORT ~ParsedFunction ();
-		FUNCPARSER_EXPORT bool GetCaseSensitive (FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT void SetCaseSensitive (bool p_CaseSensitive, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT const StringVector & GetVariableNames (FuncParserErrorData & ED) const;
-		FUNCPARSER_EXPORT void SetVariableNames (const StringVector & p_VariableNames, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT const StringVector & GetParameterNames (FuncParserErrorData & ED) const;
-		FUNCPARSER_EXPORT void SetParameterNames (const StringVector & p_ParameterNames, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT const DoubleVector GetParameterValues (FuncParserErrorData & ED) const;
-		FUNCPARSER_EXPORT void SetParameterValues (const DoubleVector & p_ParameterValues, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT bool GetSimplifyParametersAllowed (FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT void SetSimplifyParametersAllowed (bool p_SimplifyParametersAllowed, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT bool GetLogicOperatorsAllowed (FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT void SetLogicOperatorsAllowed (bool p_LogicOperatorsAllowed, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT bool GetLogicalNumericMixAllowed (FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT void SetLogicalNumericMixAllowed (bool p_LogicalNumericMixAllowed, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT double GetComparisonTolerance (FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT void SetComparisonTolerance (double p_ComparisonTolerance, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT const std::string GetStringToParse (FuncParserErrorData & ED) const;
-		FUNCPARSER_EXPORT void SetStringToParse (const std::string & p_StringToParse, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT void Parse (FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT double CalcExpression (const DoubleVector & Arg, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT std::string GetXMLString (FuncParserErrorData & ED, bool InSimplifiedState = true, const std::string & pContainerNodeName = "Rate");
-		FUNCPARSER_EXPORT double CalcExpression (double * dArgs, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT void SetParametersNotToSimplify (const StringVector & p_ParameterNames, FuncParserErrorData & ED);
-		FUNCPARSER_EXPORT const StringVector & GetParametersNotToSimplify (FuncParserErrorData & ED) const;
+   public:
+      FUNCPARSER_EXPORT ParsedFunction();
+      FUNCPARSER_EXPORT ~ParsedFunction();
+      FUNCPARSER_EXPORT bool GetCaseSensitive();
+      FUNCPARSER_EXPORT void SetCaseSensitive(bool caseSensitive);
+      FUNCPARSER_EXPORT const StringVector& GetVariableNames() const;
+      FUNCPARSER_EXPORT void SetVariableNames(const StringVector& variableNames);
+      FUNCPARSER_EXPORT const StringVector& GetParameterNames() const;
+      FUNCPARSER_EXPORT void SetParameterNames(const StringVector& parameterNames);
+      FUNCPARSER_EXPORT const DoubleVector GetParameterValues() const;
+      FUNCPARSER_EXPORT void SetParameterValues(const DoubleVector& parameterValues);
+      FUNCPARSER_EXPORT bool GetSimplifyParametersAllowed();
+      FUNCPARSER_EXPORT void SetSimplifyParametersAllowed(bool simplifyParametersAllowed);
+      FUNCPARSER_EXPORT bool GetLogicOperatorsAllowed();
+      FUNCPARSER_EXPORT void SetLogicOperatorsAllowed(bool logicOperatorsAllowed);
+      FUNCPARSER_EXPORT bool GetLogicalNumericMixAllowed();
+      FUNCPARSER_EXPORT void SetLogicalNumericMixAllowed(bool logicalNumericMixAllowed);
+      FUNCPARSER_EXPORT double GetComparisonTolerance();
+      FUNCPARSER_EXPORT void SetComparisonTolerance(double comparisonTolerance);
+      FUNCPARSER_EXPORT const std::string GetStringToParse() const;
+      FUNCPARSER_EXPORT void SetStringToParse(const std::string& stringToParse);
+      FUNCPARSER_EXPORT void Parse();
+      FUNCPARSER_EXPORT double CalcExpression(const DoubleVector& Arg);
+      FUNCPARSER_EXPORT std::string GetXMLString(bool InSimplifiedState = true, const std::string& pContainerNodeName = "Rate");
+      FUNCPARSER_EXPORT double CalcExpression(double* dArgs, FuncParserErrorData& ED);
+      FUNCPARSER_EXPORT void SetParametersNotToSimplify(const StringVector& parameterNames);
+      FUNCPARSER_EXPORT const StringVector& GetParametersNotToSimplify() const;
 
-		DimensionInfo GetDimensionInfoFor(const std::string & formula,
-			                              const std::vector<QuantityDimensionInfo> & quantityDimensions,
-										  FuncParserErrorData & ED);
-};
+      DimensionInfo GetDimensionInfoFor(const std::string& formula,
+         const std::vector<QuantityDimensionInfo>& quantityDimensions);
+   };
+
+
+   extern "C"
+   {
+      FUNCPARSER_EXPORT ParsedFunction* CreateParsedFunction();
+      FUNCPARSER_EXPORT void DisposeParsedFunction(ParsedFunction* parsedFunction);
+      FUNCPARSER_EXPORT bool GetCaseSensitive(ParsedFunction* parsedFunction);
+      FUNCPARSER_EXPORT void SetCaseSensitive(ParsedFunction* parsedFunction, bool caseSensitive);
+      //   FUNCPARSER_EXPORT const StringVector& GetVariableNames() const;
+      FUNCPARSER_EXPORT void SetVariableNames(ParsedFunction* parsedFunction, const char** variableNames, int size);
+      //   FUNCPARSER_EXPORT const StringVector& GetParameterNames(FuncParserErrorData& ED) const;
+      FUNCPARSER_EXPORT void SetParameterNames(ParsedFunction* parsedFunction, const char** parameterNames, int size);
+      //   FUNCPARSER_EXPORT const DoubleVector GetParameterValues(FuncParserErrorData& ED) const;
+      FUNCPARSER_EXPORT void SetParametersNotToSimplify(ParsedFunction* parsedFunction, const char** parameterNames, int size, bool& success, char** errorMessage);
+      //   FUNCPARSER_EXPORT const StringVector& GetParametersNotToSimplify(FuncParserErrorData& ED) const;
+      FUNCPARSER_EXPORT void SetParameterValues(ParsedFunction* parsedFunction, const double* parameterValues, int size, bool& success, char** errorMessage);
+      FUNCPARSER_EXPORT bool GetSimplifyParametersAllowed(ParsedFunction* parsedFunction);
+      FUNCPARSER_EXPORT void SetSimplifyParametersAllowed(ParsedFunction* parsedFunction, bool simplifyParametersAllowed);
+      FUNCPARSER_EXPORT bool GetLogicOperatorsAllowed(ParsedFunction* parsedFunction);
+      FUNCPARSER_EXPORT void SetLogicOperatorsAllowed(ParsedFunction* parsedFunction, bool logicOperatorsAllowed);
+      FUNCPARSER_EXPORT bool GetLogicalNumericMixAllowed(ParsedFunction* parsedFunction);
+      FUNCPARSER_EXPORT void SetLogicalNumericMixAllowed(ParsedFunction* parsedFunction, bool logicalNumericMixAllowed);
+      FUNCPARSER_EXPORT double GetComparisonTolerance(ParsedFunction* parsedFunction);
+      FUNCPARSER_EXPORT void SetComparisonTolerance(ParsedFunction* parsedFunction, double comparisonTolerance, bool& success, char** errorMessage);
+      FUNCPARSER_EXPORT const char* GetStringToParse(ParsedFunction* parsedFunction);
+      FUNCPARSER_EXPORT void SetStringToParse(ParsedFunction* parsedFunction, const char* stringToParse);
+      FUNCPARSER_EXPORT void Parse(ParsedFunction* parsedFunction, bool& success, char** errorMessage);
+      FUNCPARSER_EXPORT double CalcExpression(ParsedFunction* parsedFunction, const double* arguments, int size, bool& success, char** errorMessage);
+      FUNCPARSER_EXPORT char* GetXMLString(ParsedFunction* parsedFunction, bool& success, char** errorMessage, bool InSimplifiedState = true, const char* containerNodeName = "Rate");
+   }
 
 }//.. end "namespace FuncParserNative"
 
