@@ -20,6 +20,7 @@ class FuncParser
 		
 		//Is used for error message only! Will be set at the beginning of the Parse function
 		std::string _stringToParse;
+      void adjustErrorDescription(FuncParserErrorData & ED, const std::string & subExpression);
 	
 	public:
 		const static std::string conNOTSymbol;

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +11,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;C:\SW-Dev\Components\FuncParser\4.0\Build\Debug\x64\OSPSuite.FuncParserNative.dll&quot; C:\SW-Dev\Components\FuncParser\4.0\ConsoleApp1\bin\Debug\netcoreapp2.1&#xD;&#xA;copy &quot;C:\SW-Dev\Components\FuncParser\4.0\Build\Release\x64\OSPSuite.FuncParserNative.dll&quot; C:\SW-Dev\Components\FuncParser\4.0\ConsoleApp1\bin\Release\netcoreapp2.1" />
+    <Exec Command="copy &quot;$(SolutionDir)Build\$(ConfigurationName)\x64\OSPSuite.FuncParserNative.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xD;&#xA;copy &quot;$(SolutionDir)Build\$(ConfigurationName)\x64\OSPSuite.FuncParserNative.pdb&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xD;&#xA;copy &quot;$(SolutionDir)Build\$(ConfigurationName)\x64\OSPSuite.FuncParserNative.lib&quot; &quot;$(ProjectDir)$(OutDir)&quot;" />
   </Target>
 
 </Project>

@@ -442,12 +442,7 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 	}
 	catch(FuncParserErrorData & ED)
 	{
-		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
-		{
-         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
-			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + _stringToParse + "'");
-		}
+      adjustErrorDescription(ED, SubExpr);
       throw ED;
 	}
 	catch(...)
@@ -476,13 +471,8 @@ void FuncParser::EvalNOTOperand (FuncNode * SubNode, std::string SubExpr)
 	}
 	catch(FuncParserErrorData & ED)
 	{
-		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
-		{
-         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
-			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + _stringToParse + "'");
-         throw ED;
-		}
+      adjustErrorDescription(ED, SubExpr);
+      throw ED;
 	}
 	catch(...)
 	{
@@ -561,13 +551,8 @@ void FuncParser::EvalComparison (FuncNode * SubNode, std::string SubExpr)
 	}
 	catch(FuncParserErrorData & ED)
 	{
-		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
-		{
-         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
-			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + _stringToParse + "'");
-         throw ED;
-		}
+      adjustErrorDescription(ED, SubExpr);
+      throw ED;
 	}
 	catch(...)
 	{
@@ -782,13 +767,8 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr)
 	}
 	catch(FuncParserErrorData & ED)
 	{
-		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
-		{
-         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
-			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + _stringToParse + "'");
-         throw ED;
-		}
+		adjustErrorDescription(ED, SubExpr);
+      throw ED;
 	}
 	catch(...)
 	{
@@ -841,13 +821,8 @@ void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr)
 	}
 	catch(FuncParserErrorData & ED)
 	{
-		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
-		{
-         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
-			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + _stringToParse + "'");
-         throw ED;
-		}
+      adjustErrorDescription(ED, SubExpr);
+      throw ED;
 	}
 	catch(...)
 	{
@@ -1097,13 +1072,8 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
 	}
 	catch(FuncParserErrorData & ED)
 	{
-		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
-		{
-         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
-			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + _stringToParse + "'");
-         throw ED;
-		}
+      adjustErrorDescription(ED, SubExpr);
+      throw ED;
 	}
 	catch(...)
 	{
@@ -1190,13 +1160,8 @@ std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbst
 	}
 	catch(FuncParserErrorData & ED)
 	{
-		if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
-		{
-         ED.SetNumber(FuncParserErrorData::err_ERROR); //TODO 
-			ED.SetDescription("Error parsing substring '"+ParsedStringToDisplayString(SubExpr)+"'\n"+ ED.GetDescription()+
-			                  "\n"+"String to parse: '" + _stringToParse + "'");
-         throw ED;
-		}
+      adjustErrorDescription(ED, SubExpr);
+      throw ED;
 	}
 	catch(...)
 	{
@@ -1207,5 +1172,14 @@ std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbst
 	return NextTerm;
 }
 
+void FuncParser::adjustErrorDescription(FuncParserErrorData & ED, const std::string & subExpression)
+{
+   if (ED.GetNumber() == FuncParserErrorData::err_PARSE)
+   {
+      ED.SetNumber(FuncParserErrorData::err_RUNTIME); //to avoid multiple adjusting in case of nested exceptions 
+      ED.SetDescription("Error parsing substring '" + ParsedStringToDisplayString(subExpression) + "'\n" + ED.GetDescription() +
+         "\n" + "String to parse: '" + _stringToParse + "'");
+   }
+}
 
 }//.. end "namespace FuncParserNative"

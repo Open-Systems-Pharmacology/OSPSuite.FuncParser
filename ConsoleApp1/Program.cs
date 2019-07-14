@@ -9,7 +9,7 @@ namespace ConsoleApp1
       {
          try
          {
-            double p1 = 1, p2 = 2, p3 = 3, x=3, y=4;
+            double p1 = 1, p2 = 2, p3 = 3, x = 3, y = 4;
             var pf = new ParsedFunction();
 
             var caseSensitive = pf.CaseSensitive;
@@ -19,25 +19,30 @@ namespace ConsoleApp1
 
             pf.SetVariableNames(new[] { "x", "y" });
             pf.SetParameterNames(new[] { "p1", "p2", "p3" });
-            pf.SetParameterValues(new []{p1,p2,p3});
-            pf.SetParametersNotToSimplify(new []{"p3"});
+            pf.SetParameterValues(new[] { p1, p2, p3 });
+            pf.SetParametersNotToSimplify(new[] { "p3" });
             pf.SimplifyParametersAllowed = true;
             pf.LogicOperatorsAllowed = false;
             pf.LogicalNumericMixAllowed = false;
             pf.ComparisonTolerance = 0.1;
-            pf.StringToParse = "2*p1+3*p2+p3+x*y"; 
+            pf.StringToParse = "2*p1+3*p2+p3+x*y";
             var stringToParse = pf.StringToParse;
 
             pf.Parse();
             Console.WriteLine("Parse: OK");
 
-            var value = pf.CalcExpression(new[] {x, y});
+            var value = pf.CalcExpression(new[] { x, y });
             Console.WriteLine($"p1={p1} p2={p2} p3={p3} x={x} y={y}\n");
             Console.WriteLine($"{stringToParse} = {value}\n");
 
             var xmlString = pf.GetXMLString();
             Console.WriteLine($"{xmlString}\n");
-            pf = null; 
+            pf = null;
+
+            pf =new ParsedFunction();
+            pf.SetVariableNames(new[] { "x", "y"});
+            pf.StringToParse = "x+t";
+            pf.Parse();
          }
          catch (Exception e)
          {

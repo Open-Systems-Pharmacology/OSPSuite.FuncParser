@@ -15,7 +15,7 @@ namespace FuncParserNative
    char* MarshalString(const char* sourceString)
    {
       // Allocate memory for the string
-      int length = strlen(sourceString) + 1;
+      size_t length = strlen(sourceString) + 1;
       char* destString = (char*)CoTaskMemAlloc(length);
       strcpy_s(destString, length, sourceString);
       return destString;
