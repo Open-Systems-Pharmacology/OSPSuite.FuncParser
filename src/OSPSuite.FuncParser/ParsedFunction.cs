@@ -7,7 +7,13 @@ namespace OSPSuite.FuncParser
 {
    static class ParsedFunctionImports
    {
+
+#if _WINDOWS
       private const String FUNCPARSER_NATIVE_DLL = "OSPSuite.FuncParserNative.dll";
+#else
+      private const String FUNCPARSER_NATIVE_DLL = "OSPSuite.FuncParserNative.so";
+#endif
+
       private const CallingConvention FUNCPARSER_CALLING_CONVENTION = CallingConvention.Cdecl;
 
       [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
@@ -149,7 +155,6 @@ namespace OSPSuite.FuncParser
             if (success)
                return;
 
-            //TODO
             throw new Exception(errorMessage);
          }
       }
@@ -167,7 +172,6 @@ namespace OSPSuite.FuncParser
          if (success)
             return;
 
-         //TODO
          throw new Exception(errorMessage);
       }
 
@@ -179,7 +183,6 @@ namespace OSPSuite.FuncParser
          if (success)
             return value;
 
-         //TODO
          throw new Exception(errorMessage);
       }
 
@@ -190,7 +193,6 @@ namespace OSPSuite.FuncParser
          if (success)
             return xmlString;
 
-         //TODO
          throw new Exception(errorMessage);
       }
    }
