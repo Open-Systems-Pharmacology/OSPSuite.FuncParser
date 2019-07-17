@@ -688,6 +688,8 @@ namespace FuncParserNative
          *errorMessage = ErrorMessageFromUnknown("CalcExpression");
          success = false;
       }
+
+      return Math::GetNaN();
    }
 
    char* GetXMLString(ParsedFunction* parsedFunction, bool& success, char** errorMessage, bool InSimplifiedState, const char* containerNodeName)
