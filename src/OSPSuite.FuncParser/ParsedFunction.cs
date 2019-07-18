@@ -11,7 +11,7 @@ namespace OSPSuite.FuncParser
 #if _WINDOWS
       private const String FUNCPARSER_NATIVE_DLL = "OSPSuite.FuncParserNative.dll";
 #else
-      private const String FUNCPARSER_NATIVE_DLL = "OSPSuite.FuncParserNative.so";
+      private const String FUNCPARSER_NATIVE_DLL = "libOSPSuite.FuncParserNative.so";
 #endif
 
       private const CallingConvention FUNCPARSER_CALLING_CONVENTION = CallingConvention.Cdecl;
@@ -105,26 +105,26 @@ namespace OSPSuite.FuncParser
 
       public void SetVariableNames(IEnumerable<string> variableNames)
       {
-         var variableNamesArray = variableNames.ToArray();
-         ParsedFunctionImports.SetVariableNames(_parsedFunction, variableNamesArray, variableNamesArray.Length);
+         var (variableNamesArray, size) = convertToArray(variableNames);
+         ParsedFunctionImports.SetVariableNames(_parsedFunction, variableNamesArray, size);
       }
 
       public void SetParameterNames(IEnumerable<string> parameterNames)
       {
-         var parameterNamesArray = parameterNames.ToArray();
-         ParsedFunctionImports.SetParameterNames(_parsedFunction, parameterNamesArray, parameterNamesArray.Length);
+         var (parameterNamesArray, size) = convertToArray(parameterNames);
+         ParsedFunctionImports.SetParameterNames(_parsedFunction, parameterNamesArray, size);
       }
 
       public void SetParameterValues(IEnumerable<double> parameterValues)
       {
-         var parameterValuesArray = parameterValues.ToArray();
-         ParsedFunctionImports.SetParameterValues(_parsedFunction, parameterValuesArray, parameterValuesArray.Length);
+         var (parameterValuesArray, size) = convertToArray(parameterValues);
+         ParsedFunctionImports.SetParameterValues(_parsedFunction, parameterValuesArray, size);
       }
 
       public void SetParametersNotToSimplify(IEnumerable<string> parameterNames)
       {
-         var parameterNamesArray = parameterNames.ToArray();
-         ParsedFunctionImports.SetParametersNotToSimplify(_parsedFunction, parameterNamesArray, parameterNamesArray.Length);
+         var (parameterNamesArray, size) = convertToArray(parameterNames);
+         ParsedFunctionImports.SetParametersNotToSimplify(_parsedFunction, parameterNamesArray, size);
       }
 
       public bool SimplifyParametersAllowed
@@ -177,8 +177,8 @@ namespace OSPSuite.FuncParser
 
       public double CalcExpression(IEnumerable<double> arguments)
       {
-         var argumentsArray = arguments.ToArray();
-         var value = ParsedFunctionImports.CalcExpression(_parsedFunction, argumentsArray, argumentsArray.Length, out var success, out var errorMessage);
+         var (argumentsArray, size) = convertToArray(arguments);
+         var value = ParsedFunctionImports.CalcExpression(_parsedFunction, argumentsArray, size, out var success, out var errorMessage);
 
          if (success)
             return value;
@@ -194,6 +194,14 @@ namespace OSPSuite.FuncParser
             return xmlString;
 
          throw new Exception(errorMessage);
+      }
+
+      private (T[] array, int arraySize) convertToArray<T>(IEnumerable<T> values)
+      {
+         var array = values?.ToArray();
+         int size = array?.Length ?? 0;
+
+         return (array, size);
       }
    }
 }

@@ -11,8 +11,8 @@ namespace ConsoleApp1
          try
          {
             //Test1();
-
-            Test2();
+            //Test2();
+            Test3();
          }
          catch (Exception e)
          {
@@ -21,6 +21,19 @@ namespace ConsoleApp1
 
          Console.WriteLine("Press Enter");
          Console.ReadLine();
+      }
+
+      static void Test3()
+      {
+         var pf = new ParsedFunction();
+         var stringsToParse = new[] {"1e-3", "1.25e-4", "-2.2e-2", "1e+3", "1.25e+2", "-2.2e+2"};
+         foreach (var stringToParse in stringsToParse)
+         {
+            pf.StringToParse = stringToParse;
+            pf.Parse();
+            var d = pf.CalcExpression(null);
+            Console.WriteLine($"f({stringToParse}) = {d}");
+         }
       }
 
       static void Test2()

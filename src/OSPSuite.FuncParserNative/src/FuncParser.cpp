@@ -967,10 +967,10 @@ bool FuncParser::IsScientificNumber (const std::string & SubExpr, size_t OpPos)
 		     (PostChar>='0') && (PostChar<='9'))
 		{
 			const std::string Delimiters = "+-*\\/^,<>=!()[]{}'"+conNOTSymbol+conANDSymbol+conORSymbol;
-			size_t i;
+			long i;
 
 			//search for the first non-numeric character BEFORE and check if it is any delimiter
-			for(i = OpPos-3; i >= 0; i--)
+			for(i = (long)OpPos-3; i >= 0; i--)
 			{
 				PreChar1 = SubExpr[i];
 				if ( (PreChar1=='.') || ((PreChar1>='0') && (PreChar1<='9')))
@@ -982,7 +982,7 @@ bool FuncParser::IsScientificNumber (const std::string & SubExpr, size_t OpPos)
 			}
 
 			//search for the first non-numeric character AFTER and check if it is any delimiter
-            for (i = OpPos+2; i<(long)SubExpr.length(); i++)
+            for (i = (long)OpPos+2; i<(long)SubExpr.length(); i++)
 			{
 				PostChar = SubExpr[i];
 				if ((PostChar>='0') && (PostChar<='9'))
