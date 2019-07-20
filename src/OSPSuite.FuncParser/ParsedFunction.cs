@@ -79,8 +79,9 @@ namespace OSPSuite.FuncParser
       [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
       public static extern string GetXMLString(IntPtr parsedFunction, out bool success, out string errorMessage);
 
-      //[DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = CallingConvention.StdCall)]
-      //public static extern void SetStringToParse(IntPtr parsedFunction, [MarshalAs(UnmanagedType.LPStr)] string stringToParse);
+      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      public static extern void UpdateFrom(IntPtr srcParsedFunction, IntPtr targetParsedFunction);
+
    }
 
    public class ParsedFunction
@@ -195,6 +196,13 @@ namespace OSPSuite.FuncParser
 
          throw new Exception(errorMessage);
       }
+
+      public void UpdateFrom(ParsedFunction srcParsedFunction)
+      {
+         ParsedFunctionImports.UpdateFrom(srcParsedFunction.NativeParsedFunction,_parsedFunction);
+      }
+
+      internal IntPtr NativeParsedFunction => _parsedFunction;
 
       private (T[] array, int arraySize) convertToArray<T>(IEnumerable<T> values)
       {

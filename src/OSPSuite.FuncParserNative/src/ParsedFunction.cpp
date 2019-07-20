@@ -714,4 +714,18 @@ namespace FuncParserNative
       return MarshalString("");
    }
 
+   void UpdateFrom(ParsedFunction* srcParsedFunction, ParsedFunction* targetParsedFunction)
+   {
+      targetParsedFunction->SetCaseSensitive(srcParsedFunction->GetCaseSensitive());
+      targetParsedFunction->SetVariableNames(srcParsedFunction->GetVariableNames());
+      targetParsedFunction->SetParameterNames(srcParsedFunction->GetParameterNames());
+      targetParsedFunction->SetParameterValues(srcParsedFunction->GetParameterValues());
+      targetParsedFunction->SetSimplifyParametersAllowed(srcParsedFunction->GetSimplifyParametersAllowed());
+      targetParsedFunction->SetLogicOperatorsAllowed(srcParsedFunction->GetLogicOperatorsAllowed());
+      targetParsedFunction->SetStringToParse(srcParsedFunction->GetStringToParse());
+      targetParsedFunction->SetComparisonTolerance(srcParsedFunction->GetComparisonTolerance());
+      targetParsedFunction->SetLogicalNumericMixAllowed(srcParsedFunction->GetLogicalNumericMixAllowed());
+      targetParsedFunction->SetParametersNotToSimplify(srcParsedFunction->GetParametersNotToSimplify());
+   }
+
 }//.. end "namespace FuncParserNative"

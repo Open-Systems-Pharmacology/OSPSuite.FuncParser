@@ -96,6 +96,7 @@ namespace FuncParserNative
       FUNCPARSER_EXPORT void Parse(ParsedFunction* parsedFunction, bool& success, char** errorMessage);
       FUNCPARSER_EXPORT double CalcExpression(ParsedFunction* parsedFunction, const double* arguments, int size, bool& success, char** errorMessage);
       FUNCPARSER_EXPORT char* GetXMLString(ParsedFunction* parsedFunction, bool& success, char** errorMessage, bool InSimplifiedState = true, const char* containerNodeName = "Rate");
+      FUNCPARSER_EXPORT void UpdateFrom(ParsedFunction* srcParsedFunction, ParsedFunction* targetParsedFunction);
    }
 
 }//.. end "namespace FuncParserNative"
