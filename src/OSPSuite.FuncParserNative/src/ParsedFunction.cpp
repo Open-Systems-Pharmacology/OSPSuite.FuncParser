@@ -563,22 +563,52 @@ namespace FuncParserNative
 
    void SetParameterValues(ParsedFunction* parsedFunction, const double* parameterValues, int size, bool& success, char** errorMessage)
    {
-      DoubleVector vec;
+      success = true;
 
-      for (auto i = 0; i < size; i++)
-         vec.push_back(parameterValues[i]);
+      try
+      {
+         DoubleVector vec;
 
-      parsedFunction->SetParameterValues(vec);
+         for (auto i = 0; i < size; i++)
+            vec.push_back(parameterValues[i]);
+
+         parsedFunction->SetParameterValues(vec);
+      }
+      catch (FuncParserErrorData& ED)
+      {
+         *errorMessage = ErrorMessageFrom(ED);
+         success = false;
+      }
+      catch (...)
+      {
+         *errorMessage = ErrorMessageFromUnknown("SetParameterValues");
+         success = false;
+      }
    }
 
    void SetParametersNotToSimplify(ParsedFunction* parsedFunction, const char* parameterNames[], int size, bool& success, char** errorMessage)
    {
-      StringVector vec;
+      success = true;
 
-      for (auto i = 0; i < size; i++)
-         vec.push_back(parameterNames[i]);
+      try
+      {
+         StringVector vec;
 
-      parsedFunction->SetParametersNotToSimplify(vec);
+         for (auto i = 0; i < size; i++)
+            vec.push_back(parameterNames[i]);
+
+         parsedFunction->SetParametersNotToSimplify(vec);
+      }
+      catch (FuncParserErrorData& ED)
+      {
+         *errorMessage = ErrorMessageFrom(ED);
+         success = false;
+      }
+      catch (...)
+      {
+         *errorMessage = ErrorMessageFromUnknown("SetParametersNotToSimplify");
+         success = false;
+      }
    }
 
    bool GetSimplifyParametersAllowed(ParsedFunction* parsedFunction)

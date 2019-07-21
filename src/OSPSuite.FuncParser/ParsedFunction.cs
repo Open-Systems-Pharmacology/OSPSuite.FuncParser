@@ -35,10 +35,10 @@ namespace OSPSuite.FuncParser
       public static extern void SetParameterNames(IntPtr parsedFunction, [In, Out] string[] parameterNames, int size);
 
       [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
-      public static extern void SetParameterValues(IntPtr parsedFunction, [In, Out] double[] parameterValues, int size);
+      public static extern void SetParameterValues(IntPtr parsedFunction, [In, Out] double[] parameterValues, int size, out bool success, out string errorMessage);
 
       [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
-      public static extern void SetParametersNotToSimplify(IntPtr parsedFunction, [In, Out] string[] parameterNames, int size);
+      public static extern void SetParametersNotToSimplify(IntPtr parsedFunction, [In, Out] string[] parameterNames, int size, out bool success, out string errorMessage);
 
       [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
       public static extern bool GetSimplifyParametersAllowed(IntPtr parsedFunction);
@@ -119,13 +119,23 @@ namespace OSPSuite.FuncParser
       public void SetParameterValues(IEnumerable<double> parameterValues)
       {
          var (parameterValuesArray, size) = convertToArray(parameterValues);
-         ParsedFunctionImports.SetParameterValues(_parsedFunction, parameterValuesArray, size);
+         ParsedFunctionImports.SetParameterValues(_parsedFunction, parameterValuesArray, size, out var success, out var errorMessage);
+
+         if (success)
+            return;
+
+         throw new Exception(errorMessage);
       }
 
       public void SetParametersNotToSimplify(IEnumerable<string> parameterNames)
       {
          var (parameterNamesArray, size) = convertToArray(parameterNames);
-         ParsedFunctionImports.SetParametersNotToSimplify(_parsedFunction, parameterNamesArray, size);
+         ParsedFunctionImports.SetParametersNotToSimplify(_parsedFunction, parameterNamesArray, size, out var success, out var errorMessage);
+
+         if (success)
+            return;
+
+         throw new Exception(errorMessage);
       }
 
       public bool SimplifyParametersAllowed
