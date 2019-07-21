@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -359,6 +358,47 @@ namespace OSPSuite.FuncParser.Tests
          sut.SetVariableNames(new[] { "P", "X" });
          sut.SetParameterValues(new[] { 10.0, 20 });
          The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+      }
+   }
+
+   public class when_expression_contains_numeric_logical_mix : concern_for_parsed_function
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.StringToParse = "(2>3)*10 + (2<3)*100";
+      }
+
+      [Observation]
+      public void should_throw_exception_when_numeric_logical_mix_is_not_allowed()
+      {
+         sut.LogicalNumericMixAllowed = false;
+         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+      }
+
+      [Observation]
+      public void should_calculate_correct_value_when_numeric_logical_mix_is_allowed()
+      {
+         sut.LogicalNumericMixAllowed = true;
+         sut.CalcExpression(_arguments).ShouldBeEqualTo(100);
+      }
+   }
+
+   public class when_calculating_random_function : concern_for_parsed_function
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.StringToParse = "x*RND()+y*Rnd()+SRND()";
+      }
+
+      [Observation]
+      public void should_return_value_between_0_and_1()
+      {
+         //---- 0<Rnd, Srnd<1 ==>  0 <= x*rnd+y*rnd+srnd <= x+y+1
+         var value = sut.CalcExpression(_arguments);
+         value.ShouldBeGreaterThanOrEqualTo(0.0);
+         value.ShouldBeSmallerThanOrEqualTo(x+y+1);
       }
    }
 }
