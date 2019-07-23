@@ -9,9 +9,9 @@ namespace OSPSuite.FuncParser.DimensionParserTests
    {
       protected IList<QuantityDimensionInformation> _quantityDimensionInfos=new List<QuantityDimensionInformation>();
 
-      protected override void Context()
+      public override void GlobalContext()
       {
-         sut = new DimensionParser();
+         base.GlobalContext();
 
          var p1 = new QuantityDimensionInformation("p1", 1, 1, 1, 1, 1, 1, 1);
          var p2 = new QuantityDimensionInformation("p2", 2, 2, 2, 2, 2, 2, 2);
@@ -26,6 +26,11 @@ namespace OSPSuite.FuncParser.DimensionParserTests
          _quantityDimensionInfos.Add(p5);
       }
 
+      protected override void Context()
+      {
+         sut = new DimensionParser();
+      }
+
    }
 
    public class when_getting_formula_dimension : concern_for_dimension_parser
@@ -37,7 +42,7 @@ namespace OSPSuite.FuncParser.DimensionParserTests
          double electricCurrentExponent, double temperatureExponent, double amountExponent,
          double luminousIntensityExponent)
       {
-         var (dimension, parseSuccess, calculateDimensionSuccess, _) =
+         var (dimension, parseSuccess, calculateDimensionSuccess, errorMessage) =
             sut.GetDimensionInformationFor(formula, _quantityDimensionInfos);
 
          parseSuccess.ShouldBeTrue();
@@ -125,12 +130,12 @@ namespace OSPSuite.FuncParser.DimensionParserTests
       [TestCaseSource(nameof(TestData))]
       public void should_return_parse_failure(string formula)
       {
-         var (_, parseSuccess, calculateDimensionSuccess, message) =
+         var (_, parseSuccess, calculateDimensionSuccess, errorMessage) =
             sut.GetDimensionInformationFor(formula, _quantityDimensionInfos);
 
          parseSuccess.ShouldBeFalse();
          calculateDimensionSuccess.ShouldBeFalse();
-         string.IsNullOrEmpty(message).ShouldBeFalse();
+         string.IsNullOrEmpty(errorMessage).ShouldBeFalse();
       }
 
       protected static IEnumerable<string> TestData()
@@ -146,12 +151,12 @@ namespace OSPSuite.FuncParser.DimensionParserTests
       [TestCaseSource(nameof(TestData))]
       public void should_return_dimension_calculation_failure(string formula)
       {
-         var (_, parseSuccess, calculateDimensionSuccess, message) =
+         var (_, parseSuccess, calculateDimensionSuccess, errorMessage) =
             sut.GetDimensionInformationFor(formula, _quantityDimensionInfos);
 
          parseSuccess.ShouldBeTrue(); //formula is valid
          calculateDimensionSuccess.ShouldBeFalse();
-         string.IsNullOrEmpty(message).ShouldBeFalse();
+         string.IsNullOrEmpty(errorMessage).ShouldBeFalse();
       }
 
       protected static IEnumerable<string> TestData()

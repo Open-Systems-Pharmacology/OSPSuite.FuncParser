@@ -10,9 +10,41 @@ namespace FuncParserNative
 class DimensionParser
 {
 public:
-	DimensionInfo GetDimensionInfoFor(const std::string & formula,
-		                              const std::vector<QuantityDimensionInfo> & quantityDimensions);
+	static DimensionInfo GetDimensionInfoFor(const std::string & formula,
+		                                      const std::vector<QuantityDimensionInfo> & quantityDimensions);
 };
+
+// ---- required for PInvoke only
+struct QuantityDimensionInformationStructure
+{
+   double Length;
+   double Mass;
+   double Time;
+   double ElectricCurrent;
+   double Temperature;
+   double Amount;
+   double LuminousIntensity;
+   char* QuantityName;
+};
+
+struct DimensionInformationStructure
+{
+   double Length;
+   double Mass;
+   double Time;
+   double ElectricCurrent;
+   double Temperature;
+   double Amount;
+   double LuminousIntensity;
+
+   void CopyFrom(const DimensionInfo& dimensionInformation);
+};
+extern "C"
+{
+   FUNCPARSER_EXPORT DimensionInformationStructure GetDimensionInfoFor(
+      const char* formula, const QuantityDimensionInformationStructure* quantityDimensionStructs,
+      int size, bool& parseSuccess, bool& calculateDimensionSuccess, char** errorMessage);
+}
 
 }//.. end "namespace FuncParserNative"
 

@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace OSPSuite.FuncParser
 {
+   internal static class DimensionParserImports
+   {
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
+      public static extern DimensionInformationStructure GetDimensionInfoFor(
+         string formula, [In, Out] QuantityDimensionInformationStructure[] quantityDimensions, 
+         int size, out bool parseSuccess, out bool calculateDimensionSuccess, out string errorMessage);
+   }
+
    public class DimensionParser
    {
-      public enum DimensionParseResult
-      {
-
-      }
 
       /// <summary>
       /// Dimension information (=dimension exponents) for the given formula
@@ -21,10 +24,21 @@ namespace OSPSuite.FuncParser
       /// if (parseSuccess = false): formula is invalid
       /// message contains error description if (parseSuccess = false OR calculateDimensionSuccess = false)
       /// </returns>
-      public (DimensionInformation, bool parseSuccess, bool calculateDimensionSuccess, string message) GetDimensionInformationFor(
+      public (DimensionInformation, bool parseSuccess, bool calculateDimensionSuccess, string errorMessage) GetDimensionInformationFor(
          string formula, IEnumerable<QuantityDimensionInformation> quantityDimensions)
       {
-         throw new Exception("not implemented yet");
+         var dimensionInfoStructures=new List<QuantityDimensionInformationStructure>();
+         foreach (var dimensionInfo in quantityDimensions)
+         {
+            dimensionInfoStructures.Add(new QuantityDimensionInformationStructure(dimensionInfo));
+         }
+
+         var dimensionInformationStructure = DimensionParserImports.GetDimensionInfoFor(
+            formula, dimensionInfoStructures.ToArray(), dimensionInfoStructures.Count,
+            out var parseSuccess, out var calculateDimensionSuccess, out var errorMessage);
+
+         return (new DimensionInformation(dimensionInformationStructure), parseSuccess, calculateDimensionSuccess,
+            errorMessage);
       }
    }
 }

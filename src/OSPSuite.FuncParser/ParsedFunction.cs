@@ -5,81 +5,84 @@ using System.Runtime.InteropServices;
 
 namespace OSPSuite.FuncParser
 {
-   static class ParsedFunctionImports
+   internal static class FuncParserImportDefinitions
    {
 
 #if _WINDOWS
-      private const String FUNCPARSER_NATIVE_DLL = "OSPSuite.FuncParserNative.dll";
+      public const String NATIVE_DLL = "OSPSuite.FuncParserNative.dll";
 #else
-      private const String FUNCPARSER_NATIVE_DLL = "libOSPSuite.FuncParserNative.so";
+      public const String NATIVE_DLL = "libOSPSuite.FuncParserNative.so";
 #endif
 
-      private const CallingConvention FUNCPARSER_CALLING_CONVENTION = CallingConvention.Cdecl;
+      public const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
+   }
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+   internal static class ParsedFunctionImports
+   {
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern IntPtr CreateParsedFunction();
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void DisposeParsedFunction(IntPtr parsedFunction);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern bool GetCaseSensitive(IntPtr parsedFunction);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetCaseSensitive(IntPtr parsedFunction, bool caseSensitive);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetVariableNames(IntPtr parsedFunction, [In, Out] string[] variableNames, int size);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetParameterNames(IntPtr parsedFunction, [In, Out] string[] parameterNames, int size);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetParameterValues(IntPtr parsedFunction, [In, Out] double[] parameterValues, int size, out bool success, out string errorMessage);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetParametersNotToSimplify(IntPtr parsedFunction, [In, Out] string[] parameterNames, int size, out bool success, out string errorMessage);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern bool GetSimplifyParametersAllowed(IntPtr parsedFunction);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetSimplifyParametersAllowed(IntPtr parsedFunction, bool simplifyParametersAllowed);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern bool GetLogicOperatorsAllowed(IntPtr parsedFunction);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetLogicOperatorsAllowed(IntPtr parsedFunction, bool logicOperatorsAllowed);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern bool GetLogicalNumericMixAllowed(IntPtr parsedFunction);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetLogicalNumericMixAllowed(IntPtr parsedFunction, bool logicalNumericMixAllowed);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern double GetComparisonTolerance(IntPtr parsedFunction);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetComparisonTolerance(IntPtr parsedFunction, double comparisonTolerance, out bool success, out string errorMessage);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern string GetStringToParse(IntPtr parsedFunction);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void SetStringToParse(IntPtr parsedFunction, string stringToParse);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void Parse(IntPtr parsedFunction, out bool success, out string errorMessage);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern double CalcExpression(IntPtr parsedFunction, [In, Out] double[] arguments, int size, out bool success, out string errorMessage);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern string GetXMLString(IntPtr parsedFunction, out bool success, out string errorMessage);
 
-      [DllImport(FUNCPARSER_NATIVE_DLL, CallingConvention = FUNCPARSER_CALLING_CONVENTION)]
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern void UpdateFrom(IntPtr srcParsedFunction, IntPtr targetParsedFunction);
 
    }

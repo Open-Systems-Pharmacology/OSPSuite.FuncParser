@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.FuncParser
+﻿using System.Runtime.InteropServices;
+
+namespace OSPSuite.FuncParser
 {
    public class DimensionInformation
    {
@@ -34,6 +36,17 @@
          TemperatureExponent = temperatureExponent;
          AmountExponent = amountExponent;
          LuminousIntensityExponent = luminousIntensityExponent;
+      }
+
+      internal DimensionInformation(DimensionInformationStructure dimensionInformation)
+      {
+         LengthExponent = dimensionInformation.LengthExponent;
+         MassExponent = dimensionInformation.MassExponent;
+         TimeExponent = dimensionInformation.TimeExponent;
+         ElectricCurrentExponent = dimensionInformation.ElectricCurrentExponent;
+         TemperatureExponent = dimensionInformation.TemperatureExponent;
+         AmountExponent = dimensionInformation.AmountExponent;
+         LuminousIntensityExponent = dimensionInformation.LuminousIntensityExponent;
       }
 
       public double LengthExponent { get; set; }
@@ -91,5 +104,42 @@
       }
 
       public string QuantityName { get; set; }
+   }
+
+   [StructLayout(LayoutKind.Sequential)]
+   internal struct QuantityDimensionInformationStructure
+   {
+      public double LengthExponent;
+      public double MassExponent;
+      public double TimeExponent;
+      public double ElectricCurrentExponent;
+      public double TemperatureExponent;
+      public double AmountExponent;
+      public double LuminousIntensityExponent;
+      public string QuantityName;
+
+      public QuantityDimensionInformationStructure(QuantityDimensionInformation dimensionInformation)
+      {
+         this.LengthExponent = dimensionInformation.LengthExponent;
+         this.MassExponent = dimensionInformation.MassExponent;
+         this.TimeExponent = dimensionInformation.TimeExponent;
+         this.ElectricCurrentExponent = dimensionInformation.ElectricCurrentExponent;
+         this.TemperatureExponent = dimensionInformation.TemperatureExponent;
+         this.AmountExponent = dimensionInformation.AmountExponent;
+         this.LuminousIntensityExponent = dimensionInformation.LuminousIntensityExponent;
+         this.QuantityName = dimensionInformation.QuantityName;
+      }
+   }
+
+   [StructLayout(LayoutKind.Sequential)]
+   internal struct DimensionInformationStructure
+   {
+      public double LengthExponent;
+      public double MassExponent;
+      public double TimeExponent;
+      public double ElectricCurrentExponent;
+      public double TemperatureExponent;
+      public double AmountExponent;
+      public double LuminousIntensityExponent;
    }
 }
