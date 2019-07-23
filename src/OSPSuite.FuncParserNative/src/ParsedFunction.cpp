@@ -134,7 +134,7 @@ namespace FuncParserNative
       catch (...) {}
    }
 
-   bool ParsedFunction::GetCaseSensitive()
+   bool ParsedFunction::GetCaseSensitive() const
    {
       return _caseSensitive;
    }

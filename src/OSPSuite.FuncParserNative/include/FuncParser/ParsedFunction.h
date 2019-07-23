@@ -13,9 +13,6 @@ namespace FuncParserNative
    class ParsedFunction
    {
    private:
-      //		typedef std::vector < std::string > StringVector ;
-      //		typedef std::vector < std::string >::iterator StringVectorIterator ;
-      //		typedef std::vector < double > DoubleVector ;
       FuncNode* _funcNode;
       FuncNode* _simplifiedNode;
       bool _caseSensitive;
@@ -32,14 +29,14 @@ namespace FuncParserNative
       std::string _stringToParse;
       bool _parametersAvailable;
       void ResetParsedState(bool simplifiedStateOnly = false);
-      IndexVector GetFixedParametersIndexVector(void);
+      IndexVector GetFixedParametersIndexVector();
       void SimplifyParameters();
       std::vector<std::string> ExtractQuantityNames(const std::vector<QuantityDimensionInfo>& quantityDimensions);
 
    public:
       FUNCPARSER_EXPORT ParsedFunction();
       FUNCPARSER_EXPORT ~ParsedFunction();
-      FUNCPARSER_EXPORT bool GetCaseSensitive();
+      FUNCPARSER_EXPORT bool GetCaseSensitive() const;
       FUNCPARSER_EXPORT void SetCaseSensitive(bool caseSensitive);
       FUNCPARSER_EXPORT const StringVector& GetVariableNames() const;
       FUNCPARSER_EXPORT void SetVariableNames(const StringVector& variableNames);

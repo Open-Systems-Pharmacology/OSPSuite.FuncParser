@@ -4,8 +4,8 @@
 #include "FuncParser/Constants.h"
 #include "FuncParser/ElemFunctions.h"
 #include <vector>
+// ReSharper disable once CppUnusedIncludeDirective
 #include <assert.h>
-#include "FuncParser/FuncParserTypeDefs.h"
 #include "FuncParser/FuncNode.h"
 
 namespace FuncParserNative
