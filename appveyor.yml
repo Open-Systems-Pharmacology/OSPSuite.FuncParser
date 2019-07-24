@@ -26,7 +26,7 @@ after_build:
 
 test:
   assemblies:
-  - '**\*.Tests.Release.x64.dll'
+  - '**\Release\netcoreapp2.1\OSPSuite.FuncParser.Tests.dll'
 
 skip_commits:
   files:
