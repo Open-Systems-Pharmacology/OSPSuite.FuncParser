@@ -17,7 +17,6 @@ cache:
 
 before_build:
   - nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
-  - nuget install packages.config -OutputDirectory packages # cannot use automatic artifact publish because it's not recognized in a C++/CLI project
   - ps: (get-content src\OSPSuite.FuncParser\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE $env:RELEASE" -replace "MAJOR 0", "MAJOR $env:MAJOR" -replace "MINOR 0", "MINOR $env:MINOR" -replace "BUILD 0", "BUILD $env:APPVEYOR_BUILD_NUMBER"} | set-content src\OSPSuite.FuncParser\version.h
 
 
