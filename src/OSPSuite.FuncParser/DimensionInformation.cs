@@ -4,6 +4,7 @@ namespace OSPSuite.FuncParser
 {
    public class DimensionInformation
    {
+      // ReSharper disable once UnusedMember.Global
       public DimensionInformation()
       {
          LengthExponent = 0;
@@ -88,6 +89,7 @@ namespace OSPSuite.FuncParser
 
    public class QuantityDimensionInformation : DimensionInformation
    {
+      // ReSharper disable once UnusedMember.Global
       public QuantityDimensionInformation(string quantityName, DimensionInformation dimensionInformation) : base(dimensionInformation)
       {
          QuantityName = quantityName;
@@ -120,14 +122,14 @@ namespace OSPSuite.FuncParser
 
       public QuantityDimensionInformationStructure(QuantityDimensionInformation dimensionInformation)
       {
-         this.LengthExponent = dimensionInformation.LengthExponent;
-         this.MassExponent = dimensionInformation.MassExponent;
-         this.TimeExponent = dimensionInformation.TimeExponent;
-         this.ElectricCurrentExponent = dimensionInformation.ElectricCurrentExponent;
-         this.TemperatureExponent = dimensionInformation.TemperatureExponent;
-         this.AmountExponent = dimensionInformation.AmountExponent;
-         this.LuminousIntensityExponent = dimensionInformation.LuminousIntensityExponent;
-         this.QuantityName = dimensionInformation.QuantityName;
+         LengthExponent = dimensionInformation.LengthExponent;
+         MassExponent = dimensionInformation.MassExponent;
+         TimeExponent = dimensionInformation.TimeExponent;
+         ElectricCurrentExponent = dimensionInformation.ElectricCurrentExponent;
+         TemperatureExponent = dimensionInformation.TemperatureExponent;
+         AmountExponent = dimensionInformation.AmountExponent;
+         LuminousIntensityExponent = dimensionInformation.LuminousIntensityExponent;
+         QuantityName = dimensionInformation.QuantityName;
       }
    }
 

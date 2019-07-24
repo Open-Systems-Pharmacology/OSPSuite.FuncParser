@@ -14,7 +14,7 @@ public:
 		                                      const std::vector<QuantityDimensionInfo> & quantityDimensions);
 };
 
-// ---- required for PInvoke only
+//-------------- C interface for PInvoke -----------------------------------------
 struct QuantityDimensionInformationStructure
 {
    double Length;

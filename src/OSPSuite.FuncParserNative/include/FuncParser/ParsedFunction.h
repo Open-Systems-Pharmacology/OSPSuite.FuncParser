@@ -65,7 +65,7 @@ namespace FuncParserNative
          const std::vector<QuantityDimensionInfo>& quantityDimensions);
    };
 
-
+   //-------------- C interface for PInvoke -----------------------------------------
    extern "C"
    {
       FUNCPARSER_EXPORT ParsedFunction* CreateParsedFunction();

@@ -6,6 +6,7 @@
 #include "FuncParser/FuncNode.h"
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/Math.h"
+#include "FuncParser/PInvokeHelper.h"
 
 #ifdef _WINDOWS
 #pragma warning( disable : 4996)
@@ -839,7 +840,7 @@ void FuncParser::CheckVarParamNames (const std::vector < std::string > & Variabl
 	{
         size_t i;
         size_t j;
-		const std::string IllegalChars = " + - * \\ / ^ . , < > = ! ( ) [ ] { } '\" "+
+		const std::string IllegalChars = " + - * \\ / ^ . , < > = ! ( ) [ ] { } '\" ? : "+
 		                                 conNOTSymbol+" "+conANDSymbol+" "+conORSymbol+" "+conListDelimiter;
 
 		for(i=0; i<VariableNames.size(); i++)
@@ -1180,6 +1181,41 @@ void FuncParser::adjustErrorDescription(FuncParserErrorData & ED, const std::str
       ED.SetDescription("Error parsing substring '" + ParsedStringToDisplayString(subExpression) + "'\n" + ED.GetDescription() +
          "\n" + "String to parse: '" + _stringToParse + "'");
    }
+}
+
+//-------------- C interface for PInvoke -----------------------------------------
+bool IsValidVariableOrParameterName(const char* name, char** errorMessage)
+{
+   bool success = false;
+
+   try
+   {
+      FuncParser funcParser;
+
+      if(name==NULL)
+      {
+         *errorMessage = MarshalString("Variable name may not be empty");
+         return false;
+      }
+
+      //will throw an exception if the given name is not valid
+      funcParser.CheckVarParamNames({name}, {});
+
+      *errorMessage = MarshalString("");
+      success = true;
+   }
+   catch (FuncParserErrorData& ED)
+   {
+      *errorMessage = ErrorMessageFrom(ED);
+      success = false;
+   }
+   catch (...)
+   {
+      *errorMessage = ErrorMessageFromUnknown("IsValidVariableOrParameterName");
+      success = false;
+   }
+
+   return success;
 }
 
 }//.. end "namespace FuncParserNative"

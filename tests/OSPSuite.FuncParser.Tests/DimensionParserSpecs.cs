@@ -42,7 +42,7 @@ namespace OSPSuite.FuncParser.DimensionParserTests
          double electricCurrentExponent, double temperatureExponent, double amountExponent,
          double luminousIntensityExponent)
       {
-         var (dimension, parseSuccess, calculateDimensionSuccess, errorMessage) =
+         var (dimension, parseSuccess, calculateDimensionSuccess, _) =
             sut.GetDimensionInformationFor(formula, _quantityDimensionInfos);
 
          parseSuccess.ShouldBeTrue();

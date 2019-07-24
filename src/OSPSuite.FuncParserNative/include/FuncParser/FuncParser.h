@@ -92,6 +92,12 @@ class FuncParser
 		std::string GetNextTerm (const std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, std::string Op1, std::string Op2, size_t & FirstPos, std::string & NewOp);
 };
 
+//-------------- C interface for PInvoke -----------------------------------------
+extern "C"
+{
+   FUNCPARSER_EXPORT bool IsValidVariableOrParameterName(const char* name, char** errorMessage);
+}
+
 }//.. end "namespace FuncParserNative"
 
 
