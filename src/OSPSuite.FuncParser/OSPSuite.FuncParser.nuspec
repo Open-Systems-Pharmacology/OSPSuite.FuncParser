@@ -25,7 +25,6 @@
     <file src="..\..\Build\Release\x64\OSPSuite.FuncParserNative.pdb" target="OSPSuite.FuncParser\bin\native\x64\Release" />
 
     <file src="bin\Release\netstandard2.0\OSPSuite.FuncParser.dll" target="lib\net45" />
-    <file src="bin\Release\netstandard2.0\OSPSuite.FuncParser.lib" target="lib\net45" />
     <file src="bin\Release\netstandard2.0\OSPSuite.FuncParser.pdb" target="lib\net45" />
     <file src="..\..\Build\Release\x64\OSPSuite.FuncParserNative.dll" target="lib\net45" />
     <file src="..\..\Build\Release\x64\OSPSuite.FuncParserNative.lib" target="lib\net45" />
