@@ -3,9 +3,9 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 
-namespace OSPSuite.FuncParser.DimensionParserTests
+namespace OSPSuite.FuncParser
 {
-   public abstract class concern_for_dimension_parser : ContextSpecification<DimensionParser>
+   public abstract class concern_for_DimensionParser : ContextSpecification<DimensionParser>
    {
       protected IList<QuantityDimensionInformation> _quantityDimensionInfos=new List<QuantityDimensionInformation>();
 
@@ -33,9 +33,9 @@ namespace OSPSuite.FuncParser.DimensionParserTests
 
    }
 
-   public class when_getting_formula_dimension : concern_for_dimension_parser
+   public class when_getting_formula_dimension : concern_for_DimensionParser
    {
-      [Observation]
+      [Test]
       [TestCaseSource(nameof(TestData))]
       public void should_return_correct_parsed_dimension(string formula, 
          double lengthExponent, double massExponent, double timeExponent,
@@ -124,7 +124,7 @@ namespace OSPSuite.FuncParser.DimensionParserTests
       }
    }
 
-   public class when_getting_dimension_for_invalid_formula : concern_for_dimension_parser
+   public class when_getting_dimension_for_invalid_formula : concern_for_DimensionParser
    {
       [Observation]
       [TestCaseSource(nameof(TestData))]
@@ -145,7 +145,7 @@ namespace OSPSuite.FuncParser.DimensionParserTests
       }
    }
 
-   public class when_cannot_calculate_dimension_for_valid_formula : concern_for_dimension_parser
+   public class when_cannot_calculate_dimension_for_valid_formula : concern_for_DimensionParser
    {
       [Observation]
       [TestCaseSource(nameof(TestData))]

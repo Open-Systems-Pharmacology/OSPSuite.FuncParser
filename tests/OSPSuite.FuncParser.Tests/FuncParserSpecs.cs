@@ -3,7 +3,7 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 
-namespace OSPSuite.FuncParser.FuncParserTests
+namespace OSPSuite.FuncParser
 {
    public abstract class concern_for_func_parser : ContextSpecification<FuncParser>
    {
