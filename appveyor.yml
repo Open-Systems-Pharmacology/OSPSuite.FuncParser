@@ -22,7 +22,7 @@ after_build:
   - ps: Get-ChildItem .\OSPSuite.FuncParser.*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 test_script:
-- cmd: dotnet test --no-build --no-restore
+  - cmd: dotnet test --no-build --no-restore
 
 skip_branch_with_pr: true
 
