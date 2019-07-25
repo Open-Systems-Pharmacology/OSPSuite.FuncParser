@@ -21,9 +21,8 @@ after_build:
   - cmd: nuget pack src\OSPSuite.FuncParser\OSPSuite.FuncParser.nuspec -version %app_version%
   - ps: Get-ChildItem .\OSPSuite.FuncParser.*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
-test:
-  assemblies:
-    - OSPSuite.FuncParser.Tests.dll
+test_script:
+- cmd: dotnet test --no-build --no-restore
 
 skip_branch_with_pr: true
 
