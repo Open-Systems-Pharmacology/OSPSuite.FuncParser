@@ -35,7 +35,7 @@ namespace OSPSuite.FuncParser
 
    public class when_getting_formula_dimension : concern_for_DimensionParser
    {
-      [Test]
+      [Observation]
       [TestCaseSource(nameof(TestData))]
       public void should_return_correct_parsed_dimension(string formula, 
          double lengthExponent, double massExponent, double timeExponent,
