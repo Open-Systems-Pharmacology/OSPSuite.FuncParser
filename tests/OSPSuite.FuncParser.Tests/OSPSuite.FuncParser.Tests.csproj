@@ -7,7 +7,7 @@
 
     <RunPostBuildEvent>Always</RunPostBuildEvent>
 
-    <RootNamespace>OSPSuite.FuncParser</RootNamespace>
+    <RootNamespace>OSPSuite.FuncParser.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
