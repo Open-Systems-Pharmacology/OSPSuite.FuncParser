@@ -6,6 +6,7 @@
 
 #ifdef linux
 #define CoTaskMemAlloc malloc
+#include <cstring>
 #endif
 
 namespace FuncParserNative
@@ -17,7 +18,11 @@ namespace FuncParserNative
       // Allocate memory for the string
       size_t length = strlen(sourceString) + 1;
       char* destString = (char*)CoTaskMemAlloc(length);
+#ifdef _WINDOWS
       strcpy_s(destString, length, sourceString);
+#else
+      strncpy(destString, sourceString, length);
+#endif
       return destString;
    }
 
