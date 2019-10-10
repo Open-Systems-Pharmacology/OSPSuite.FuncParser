@@ -27,5 +27,6 @@
     <file src="bin\Release\netstandard2.0\OSPSuite.FuncParser.pdb" target="lib\netstandard2.0" />
 
     <file src="..\OSPSuite.FuncParserNative\include\**\*.h" target="OSPSuite.FuncParserNative\include" />
+    <file src="..\OSPSuite.FuncParserNative\src\**\*.*" target="OSPSuite.FuncParserNative\src" />
   </files>
 </package>
