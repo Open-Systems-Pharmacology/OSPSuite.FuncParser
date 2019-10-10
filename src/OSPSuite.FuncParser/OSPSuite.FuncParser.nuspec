@@ -28,5 +28,7 @@
 
     <file src="..\OSPSuite.FuncParserNative\include\**\*.h" target="OSPSuite.FuncParserNative\include" />
     <file src="..\OSPSuite.FuncParserNative\src\**\*.*" target="OSPSuite.FuncParserNative\src" />
+    <file src="..\OSPSuite.FuncParserNative\src\*.*" target="OSPSuite.FuncParserNative" exclude="..\OSPSuite.FuncParserNative\src\*.vcxproj*" />
+
   </files>
 </package>
