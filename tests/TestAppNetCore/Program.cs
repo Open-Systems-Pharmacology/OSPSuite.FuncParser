@@ -78,7 +78,7 @@ namespace ConsoleApp1
       {
          var startTime = DateTime.UtcNow;
 
-         const int NUMBER_ITERATIONS = 1000;
+         const int NUMBER_ITERATIONS = 100;
          const int NUMBER_VARIABLES = 100;
 
          var variableNames = new List<string>();

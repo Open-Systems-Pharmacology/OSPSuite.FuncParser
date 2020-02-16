@@ -10,6 +10,11 @@
 
 #ifdef _WINDOWS
 #pragma warning( disable : 4996)
+#include <windows.h>
+#ifdef _DEBUG
+//#include <vld.h> //uncomment to compile with Visual Leak Detector support
+//s. https://github.com/Open-Systems-Pharmacology/OSPSuite.SimModel/wiki/Find-memory-leaks-with-Visual-Leak-Detector
+#endif
 #endif
 
 #ifdef linux
@@ -1219,3 +1224,34 @@ bool IsValidVariableOrParameterName(const char* name, char** errorMessage)
 }
 
 }//.. end "namespace FuncParserNative"
+
+#ifdef _WINDOWS
+extern "C" BOOL WINAPI DllMain(HINSTANCE const instance, DWORD const reason, LPVOID const reserved)
+{
+   switch (reason)
+   {
+      case DLL_PROCESS_ATTACH:
+         // Initialize once for each new process.
+         // Return FALSE to fail DLL load.
+         break;
+
+      case DLL_THREAD_ATTACH:
+         // Do thread-specific initialization.
+         break;
+
+      case DLL_THREAD_DETACH:
+         // Do thread-specific cleanup.
+         break;
+
+      case DLL_PROCESS_DETACH:
+         // Perform any necessary cleanup.
+         try
+         {
+            delete FuncParserNative::ElemFunctions::GetInstance();
+         }
+         catch(...){}
+         break;
+   }
+   return TRUE;  // Successful DLL_PROCESS_ATTACH.
+}
+#endif
