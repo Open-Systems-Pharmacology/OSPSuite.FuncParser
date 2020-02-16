@@ -99,6 +99,7 @@ ElemFunctions * ElemFunctions::GetInstance ()
 
 ElemFunctions::ElemFunctions ()
 {
+   _numberOfElemFunctions = 0;
 	_elemFunctionsInstance = NULL;	
 }
 
@@ -106,21 +107,25 @@ ElemFunctions::~ElemFunctions ()
 {
 	try
 	{
-		delete[] _elemFunctions;
-		_elemFunctions = NULL;
+      if (_elemFunctionsInstance != NULL)
+      {
+         for (auto i = 0; i < _numberOfElemFunctions; i++)
+         {
+            delete _elemFunctions[i];
+            delete _elemFunctionKeys[i];
+         }
 
-		delete[] _elemFunctionKeys;
-		_elemFunctionKeys = NULL;
+		   delete[] _elemFunctions;
+		   _elemFunctions = NULL;
 
-		delete[] _elemFunctionTypes;
-		_elemFunctionTypes = NULL;
+		   delete[] _elemFunctionKeys;
+		   _elemFunctionKeys = NULL;
 
-		if (_elemFunctionsInstance != NULL)
-		{
-			delete _elemFunctionsInstance;
+		   delete[] _elemFunctionTypes;
+		   _elemFunctionTypes = NULL;
+
 			_elemFunctionsInstance = NULL;
 		}
-
 	}
 	catch(...)
 	{}
