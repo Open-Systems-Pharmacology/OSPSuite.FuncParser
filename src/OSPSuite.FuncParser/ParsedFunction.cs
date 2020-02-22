@@ -126,18 +126,12 @@ namespace OSPSuite.FuncParser
       public void SetVariableNames(IEnumerable<string> variableNames)
       {
          var (variableNamesArray, size) = convertToArray(variableNames);
-         if (variableNamesArray.Any(s => s==null))
-            throw new Exception("Variable name may not be null");
-
          ParsedFunctionImports.SetVariableNames(_parsedFunction, variableNamesArray, size);
       }
 
       public void SetParameterNames(IEnumerable<string> parameterNames)
       {
          var (parameterNamesArray, size) = convertToArray(parameterNames);
-         if (parameterNamesArray.Any(s => s == null))
-            throw new Exception("Parameter name may not be null");
-
          ParsedFunctionImports.SetParameterNames(_parsedFunction, parameterNamesArray, size);
       }
 
@@ -151,9 +145,6 @@ namespace OSPSuite.FuncParser
       public void SetParametersNotToSimplify(IEnumerable<string> parameterNames)
       {
          var (parameterNamesArray, size) = convertToArray(parameterNames);
-         if (parameterNamesArray.Any(s => s == null))
-            throw new Exception("Parameter name may not be null");
-
          ParsedFunctionImports.SetParametersNotToSimplify(_parsedFunction, parameterNamesArray, size, out var success, out var errorMessage);
          evaluateCppCallResult(success, errorMessage);
       }
@@ -189,12 +180,7 @@ namespace OSPSuite.FuncParser
       public string StringToParse
       {
          get => ParsedFunctionImports.GetStringToParse(_parsedFunction);
-         set
-         {
-            if(value == null)
-               throw new Exception("String to parse may not be null");
-            ParsedFunctionImports.SetStringToParse(_parsedFunction, value);
-         }
+         set => ParsedFunctionImports.SetStringToParse(_parsedFunction, value);
       }
 
       public void Parse()
