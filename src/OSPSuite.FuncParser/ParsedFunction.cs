@@ -87,9 +87,25 @@ namespace OSPSuite.FuncParser
 
    }
 
+   internal class PInvokeHelper
+   {
+      public static void EvaluateCppCallResult(bool success, string errorMessage)
+      {
+         if (success)
+            return;
+
+         throw new Exception(errorMessage);
+      }
+   }
+
    public class ParsedFunction
    {
       private readonly IntPtr _parsedFunction;
+
+      private void evaluateCppCallResult(bool success, string errorMessage)
+      {
+         PInvokeHelper.EvaluateCppCallResult(success, errorMessage);
+      }
 
       public ParsedFunction()
       {
@@ -110,12 +126,18 @@ namespace OSPSuite.FuncParser
       public void SetVariableNames(IEnumerable<string> variableNames)
       {
          var (variableNamesArray, size) = convertToArray(variableNames);
+         if (variableNamesArray.Any(s => s==null))
+            throw new Exception("Variable name may not be null");
+
          ParsedFunctionImports.SetVariableNames(_parsedFunction, variableNamesArray, size);
       }
 
       public void SetParameterNames(IEnumerable<string> parameterNames)
       {
          var (parameterNamesArray, size) = convertToArray(parameterNames);
+         if (parameterNamesArray.Any(s => s == null))
+            throw new Exception("Parameter name may not be null");
+
          ParsedFunctionImports.SetParameterNames(_parsedFunction, parameterNamesArray, size);
       }
 
@@ -123,22 +145,17 @@ namespace OSPSuite.FuncParser
       {
          var (parameterValuesArray, size) = convertToArray(parameterValues);
          ParsedFunctionImports.SetParameterValues(_parsedFunction, parameterValuesArray, size, out var success, out var errorMessage);
-
-         if (success)
-            return;
-
-         throw new Exception(errorMessage);
+         evaluateCppCallResult(success, errorMessage);
       }
 
       public void SetParametersNotToSimplify(IEnumerable<string> parameterNames)
       {
          var (parameterNamesArray, size) = convertToArray(parameterNames);
+         if (parameterNamesArray.Any(s => s == null))
+            throw new Exception("Parameter name may not be null");
+
          ParsedFunctionImports.SetParametersNotToSimplify(_parsedFunction, parameterNamesArray, size, out var success, out var errorMessage);
-
-         if (success)
-            return;
-
-         throw new Exception(errorMessage);
+         evaluateCppCallResult(success, errorMessage);
       }
 
       public bool SimplifyParametersAllowed
@@ -165,49 +182,42 @@ namespace OSPSuite.FuncParser
          set
          {
             ParsedFunctionImports.SetComparisonTolerance(_parsedFunction, value, out var success, out var errorMessage);
-
-            if (success)
-               return;
-
-            throw new Exception(errorMessage);
+            evaluateCppCallResult(success, errorMessage);
          }
       }
 
       public string StringToParse
       {
          get => ParsedFunctionImports.GetStringToParse(_parsedFunction);
-         set => ParsedFunctionImports.SetStringToParse(_parsedFunction, value);
+         set
+         {
+            if(value == null)
+               throw new Exception("String to parse may not be null");
+            ParsedFunctionImports.SetStringToParse(_parsedFunction, value);
+         }
       }
 
       public void Parse()
       {
          ParsedFunctionImports.Parse(_parsedFunction, out var success, out var errorMessage);
-
-         if (success)
-            return;
-
-         throw new Exception(errorMessage);
+         evaluateCppCallResult(success, errorMessage);
       }
 
       public double CalcExpression(IEnumerable<double> arguments)
       {
          var (argumentsArray, size) = convertToArray(arguments);
          var value = ParsedFunctionImports.CalcExpression(_parsedFunction, argumentsArray, size, out var success, out var errorMessage);
+         evaluateCppCallResult(success, errorMessage);
 
-         if (success)
-            return value;
-
-         throw new Exception(errorMessage);
+         return value;
       }
 
       public string GetXMLString()
       {
          var xmlString = ParsedFunctionImports.GetXMLString(_parsedFunction, out var success, out var errorMessage);
+         evaluateCppCallResult(success, errorMessage);
 
-         if (success)
-            return xmlString;
-
-         throw new Exception(errorMessage);
+         return xmlString;
       }
 
       public void UpdateFrom(ParsedFunction srcParsedFunction)

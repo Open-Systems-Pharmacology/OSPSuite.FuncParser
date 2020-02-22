@@ -401,4 +401,31 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
          value.ShouldBeSmallerThanOrEqualTo(x+y+1);
       }
    }
+
+   public class when_variable_or_parameter_name_or_string_to_parse_is_null : concern_for_ParsedFunction
+   {
+      [Observation]
+      public void should_throw_an_exception_when_parameter_name_is_null()
+      {
+         The.Action(() => sut.SetParameterNames(new[] {"p1", null})).ShouldThrowAn<Exception>();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_when_variable_name_is_null()
+      {
+         The.Action(() => sut.SetVariableNames(new[] { "x", null })).ShouldThrowAn<Exception>();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_when_parameter_not_to_simplify_name_is_null()
+      {
+         The.Action(() => sut.SetParametersNotToSimplify(new[] { "p1", null })).ShouldThrowAn<Exception>();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_when_string_to_parse_is_null()
+      {
+         The.Action(() => sut.StringToParse=null).ShouldThrowAn<Exception>();
+      }
+   }
 }
