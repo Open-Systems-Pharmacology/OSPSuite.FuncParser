@@ -546,7 +546,7 @@ namespace FuncParserNative
       StringVector vec;
       
       for (auto i = 0; i < size; i++)
-         vec.push_back(variableNames[i]);
+         vec.push_back(variableNames[i] != NULL ? variableNames[i] : "");
       
       parsedFunction->SetVariableNames(vec);
    }
@@ -556,7 +556,7 @@ namespace FuncParserNative
       StringVector vec;
 
       for (auto i = 0; i < size; i++)
-         vec.push_back(parameterNames[i]);
+         vec.push_back(parameterNames[i] != NULL ? parameterNames[i] : "");
 
       parsedFunction->SetParameterNames(vec);
    }
@@ -595,7 +595,7 @@ namespace FuncParserNative
          StringVector vec;
 
          for (auto i = 0; i < size; i++)
-            vec.push_back(parameterNames[i]);
+            vec.push_back(parameterNames[i] != NULL ? parameterNames[i] : "");
 
          parsedFunction->SetParametersNotToSimplify(vec);
       }
@@ -672,7 +672,7 @@ namespace FuncParserNative
 
    void SetStringToParse(ParsedFunction* parsedFunction, const char* stringToParse)
    {
-      parsedFunction->SetStringToParse(stringToParse);
+      parsedFunction->SetStringToParse(stringToParse != NULL ? stringToParse : "");
    }
 
    void Parse(ParsedFunction* parsedFunction, bool& success, char** errorMessage)

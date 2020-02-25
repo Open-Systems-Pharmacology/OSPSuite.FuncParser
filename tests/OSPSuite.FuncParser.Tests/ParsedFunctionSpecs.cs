@@ -132,6 +132,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
 
       protected static IEnumerable<string> InvalidTestData()
       {
+         yield return null;
          yield return "";
          yield return "x+y+z+";
          yield return "max(x)";
@@ -404,28 +405,25 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
 
    public class when_variable_or_parameter_name_or_string_to_parse_is_null : concern_for_ParsedFunction
    {
-      [Observation]
-      public void should_throw_an_exception_when_parameter_name_is_null()
+      protected override void Context()
       {
-         The.Action(() => sut.SetParameterNames(new[] {"p1", null})).ShouldThrowAn<Exception>();
+         base.Context();
+         sut.StringToParse = "2";
+         sut.SetParameterNames(new[] { "p1", "p2" });
+      }
+
+      [Observation]
+      public void should_throw_an_exception_during_parsing_when_parameter_name_is_null()
+      {
+         sut.SetParameterNames(new[] {"p1", null});
+         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
       }
 
       [Observation]
       public void should_throw_an_exception_when_variable_name_is_null()
       {
-         The.Action(() => sut.SetVariableNames(new[] { "x", null })).ShouldThrowAn<Exception>();
-      }
-
-      [Observation]
-      public void should_throw_an_exception_when_parameter_not_to_simplify_name_is_null()
-      {
-         The.Action(() => sut.SetParametersNotToSimplify(new[] { "p1", null })).ShouldThrowAn<Exception>();
-      }
-
-      [Observation]
-      public void should_throw_an_exception_when_string_to_parse_is_null()
-      {
-         The.Action(() => sut.StringToParse=null).ShouldThrowAn<Exception>();
+         sut.SetVariableNames(new[] { "x", null });
+         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
       }
    }
 }
