@@ -23,7 +23,7 @@ build_script:
 before_build: 
   - ps: (get-content src\OSPSuite.FuncParserNative\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE $env:RELEASE" -replace "MAJOR 0", "MAJOR $env:MAJOR" -replace "MINOR 0", "MINOR $env:MINOR" -replace "BUILD 0", "BUILD $env:APPVEYOR_BUILD_NUMBER"} | set-content src\OSPSuite.FuncParser\version.h
   # linux specific source ordering is important here to make sure that bddhelper is fetched from appveyor and not from nuget.org 
-  - dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
+  - dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
   # linux specific removal of native project FuncParserNative from the solution
   - sh: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
