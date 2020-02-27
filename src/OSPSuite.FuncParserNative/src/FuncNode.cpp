@@ -94,9 +94,6 @@ namespace FuncParserNative
    {
       assert(_nodeType != NT_INVALID);
 
-      if (_firstOperand != NULL)
-         delete _firstOperand;
-
       _firstOperand = firstOperand;
    }
 
@@ -110,9 +107,6 @@ namespace FuncParserNative
    void FuncNode::SetSecondOperand(FuncNode* secondOperand)
    {
       assert(_nodeType != NT_INVALID);
-
-      if (_secondOperand != NULL)
-         delete _secondOperand;
 
       _secondOperand = secondOperand;
    }
@@ -128,9 +122,6 @@ namespace FuncParserNative
    {
       assert(_nodeType != NT_INVALID);
 
-      if (_branchCondition != NULL)
-         delete _branchCondition;
-
       _branchCondition = branchCondition;
    }
 
@@ -141,9 +132,6 @@ namespace FuncParserNative
 
    void FuncNode::SetVariableArgument(FuncNode* variableArgument)
    {
-      if (_variableArgument != NULL)
-         delete _variableArgument;
-
       _variableArgument = variableArgument;
    }
 
