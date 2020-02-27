@@ -4,6 +4,7 @@ using System.Xml;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.FuncParser.ParsedFunctionTests
 {
@@ -132,6 +133,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
 
       protected static IEnumerable<string> InvalidTestData()
       {
+         yield return "Vmax*x^y(x^y+z^y)2";
          yield return null;
          yield return "";
          yield return "x+y+z+";
@@ -242,7 +244,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
       public void should_throw_an_exception_when_parsing_invalid_expression(string stringToParse)
       {
          sut.StringToParse = stringToParse;
-         The.Action(()=>sut.Parse()).ShouldThrowAn<Exception>();
+         The.Action(()=>sut.Parse()).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -253,7 +255,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
       public void should_throw_an_exception_when_calculating_invalid_expression(string stringToParse)
       {
          sut.StringToParse = stringToParse;
-         The.Action(() => sut.CalcExpression(_arguments)).ShouldThrowAn<Exception>();
+         The.Action(() => sut.CalcExpression(_arguments)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -268,25 +270,25 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
       [Observation]
       public void should_throw_an_exception_when_setting_too_few_parameter_values()
       {
-         The.Action(() => sut.SetParameterValues(new []{13.0})).ShouldThrowAn<Exception>();
+         The.Action(() => sut.SetParameterValues(new []{13.0})).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_throw_an_exception_when_setting_too_many_parameter_values()
       {
-         The.Action(() => sut.SetParameterValues(new[] { 13.0, 14, 15 })).ShouldThrowAn<Exception>();
+         The.Action(() => sut.SetParameterValues(new[] { 13.0, 14, 15 })).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_throw_an_exception_when_setting_too_few_variable_values()
       {
-         The.Action(() => sut.CalcExpression(new[] { 13.0, 14})).ShouldThrowAn<Exception>();
+         The.Action(() => sut.CalcExpression(new[] { 13.0, 14})).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_throw_an_exception_when_setting_too_many_variable_values()
       {
-         The.Action(() => sut.CalcExpression(new[] { 13.0, 14, 15, 16 })).ShouldThrowAn<Exception>();
+         The.Action(() => sut.CalcExpression(new[] { 13.0, 14, 15, 16 })).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -331,7 +333,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
          sut.SetParameterNames(new[] { "p", "P" });
          sut.SetVariableNames(new[] { "x"});
          sut.SetParameterValues(new[] { 10.0, 20 });
-         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+         The.Action(() => sut.Parse()).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
@@ -340,7 +342,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
          sut.SetParameterNames(new[] { "p"});
          sut.SetVariableNames(new[] { "x", "X" });
          sut.SetParameterValues(new[] { 10.0});
-         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+         The.Action(() => sut.Parse()).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
@@ -358,7 +360,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
          sut.SetParameterNames(new[] { "p", "x" });
          sut.SetVariableNames(new[] { "P", "X" });
          sut.SetParameterValues(new[] { 10.0, 20 });
-         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+         The.Action(() => sut.Parse()).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -374,7 +376,7 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
       public void should_throw_exception_when_numeric_logical_mix_is_not_allowed()
       {
          sut.LogicalNumericMixAllowed = false;
-         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+         The.Action(() => sut.Parse()).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
@@ -416,14 +418,14 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
       public void should_throw_an_exception_during_parsing_when_parameter_name_is_null()
       {
          sut.SetParameterNames(new[] {"p1", null});
-         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+         The.Action(() => sut.Parse()).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_throw_an_exception_when_variable_name_is_null()
       {
          sut.SetVariableNames(new[] { "x", null });
-         The.Action(() => sut.Parse()).ShouldThrowAn<Exception>();
+         The.Action(() => sut.Parse()).ShouldThrowAn<OSPSuiteException>();
       }
    }
 }

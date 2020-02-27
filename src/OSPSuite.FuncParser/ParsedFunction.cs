@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.FuncParser
 {
@@ -94,7 +95,7 @@ namespace OSPSuite.FuncParser
          if (success)
             return;
 
-         throw new Exception(errorMessage);
+         throw new OSPSuiteException(errorMessage);
       }
    }
 
