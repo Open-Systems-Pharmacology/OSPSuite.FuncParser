@@ -2,6 +2,10 @@ image:
 - Visual Studio 2019
 - Ubuntu1804
 
+# hack until donet patching works with PR
+init: 
+  - cmd: if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
+
 environment:
   major: 4
   minor: 0
