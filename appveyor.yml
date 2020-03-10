@@ -10,7 +10,7 @@ environment:
   major: 4
   minor: 0
   release: 0
-  app_version: "$(major).$(minor).$(release).$(APPVEYOR_BUILD_NUMBER)"
+  app_version: "$(major).$(minor).$(release).$(build_number)"
 
 version: "$(major).$(minor).$(release).{build}"
 
