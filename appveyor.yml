@@ -10,6 +10,13 @@ environment:
 
 version: "$(major).$(minor).$(release).{build}"
 
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  assembly_version: '$(app_version)'
+  file_version: '$(app_version)'
+  informational_version: '$(app_version)'
+
 build_script:
   - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
@@ -21,7 +28,7 @@ build_script:
   - sh: dotnet build OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=x64
 
 before_build: 
-  - ps: (get-content src\OSPSuite.FuncParserNative\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE $env:RELEASE" -replace "MAJOR 0", "MAJOR $env:MAJOR" -replace "MINOR 0", "MINOR $env:MINOR" -replace "BUILD 0", "BUILD $env:APPVEYOR_BUILD_NUMBER"} | set-content src\OSPSuite.FuncParser\version.h
+  - ps: (get-content src\OSPSuite.FuncParserNative\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE $env:RELEASE" -replace "MAJOR 0", "MAJOR $env:MAJOR" -replace "MINOR 0", "MINOR $env:MINOR" -replace "BUILD 0", "BUILD $env:APPVEYOR_BUILD_NUMBER"} | set-content src\OSPSuite.FuncParserNative\version.h
   # linux specific source ordering is important here to make sure that bddhelper is fetched from appveyor and not from nuget.org 
   - dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
   # linux specific removal of native project FuncParserNative from the solution
@@ -48,8 +55,3 @@ pull_requests:
 
 nuget:
   disable_publish_on_pr: true
-
-#notifications:
-#  - provider: Slack
-#    incoming_webhook:
-#      secure: 4MH9Em6TtrKalq6808dhPOqypTfYBJvVlqPaa9akNyF1h7st5qNdNezFp6T+bWXqrcZ4q/smtPcJ7LkUFHL46JDYUFlIL8FDz+ApX/vP+x0=

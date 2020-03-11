@@ -1,6 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
+#include "version.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,8 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "\r\0"
+    "\r\n"
+    "\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -50,37 +52,37 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,0,0,0
- PRODUCTVERSION 0,0,0,0
+FILEVERSION MAJOR, MINOR, RELEASE, BUILD
+PRODUCTVERSION MAJOR, MINOR, RELEASE, BUILD
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
 #else
  FILEFLAGS 0x0L
 #endif
- FILEOS 0x4L
+ FILEOS 0x40004L
  FILETYPE 0x2L
  FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904b0"
+        BLOCK "040704b0"
         BEGIN
-            VALUE "Comments", "© Open Systems Pharmacology Community 2019"
-            VALUE "CompanyName", "Open Systems Pharmacology Community"
-            VALUE "FileDescription", "Function Parser for numeric and logic expressions"
-            VALUE "FileVersion", "0.0.0.0"
-            VALUE "InternalName", "OSPSuite.FuncParserNative"
-            VALUE "LegalCopyright", "Copyright 2019"
-            VALUE "LegalTrademarks", "© Open Systems Pharmacology Community"
-            VALUE "OriginalFilename", "OSPSuite.FuncParserNative.DLL"
-            VALUE "ProductName", "FuncParser Module"
-            VALUE "ProductVersion", "0.0.0.0"
+			VALUE "Comments", COMMENTS "\0"
+            VALUE "CompanyName", COMPANY_NAME "\0"
+            VALUE "FileDescription", FILE_DESCRIPTION "\0"
+            VALUE "FileVersion", FILE_VERSION "\0"
+            VALUE "InternalName", INTERNAL_NAME "\0"
+            VALUE "LegalCopyright", LEGAL_COPYRIGHT "\0"
+            VALUE "LegalTrademarks", LEGAL_TRADEMARKS "\0"
+            VALUE "OriginalFilename", ORIGINAL_FILENAME "\0"
+            VALUE "ProductName", PRODUCT_NAME "\0"
+            VALUE "ProductVersion", PRODUCT_VERSION "\0"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x409, 1200
+        VALUE "Translation", 0x407, 1200
     END
 END
 
@@ -94,6 +96,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
+
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

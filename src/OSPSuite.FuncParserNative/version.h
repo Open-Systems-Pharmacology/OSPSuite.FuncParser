@@ -12,15 +12,15 @@
                                     "." STRINGIZE(RELEASE) \
                                     "." STRINGIZE(BUILD) \
 
-#define COMMENTS "© Open Systems Pharmacology Community 2017"
+#define COMMENTS "© Open Systems Pharmacology Community 2020"
 #define COMPANY_NAME "Open Systems Pharmacology Community"
 #define FILE_DESCRIPTION "Function Parser for numeric and logic expressions"
 #define FILE_VERSION VER_FILE_VERSION_STR
 #define INTERNAL_NAME "OSPSuite FuncParser"
-#define LEGAL_COPYRIGHT "Copyright 2017"
+#define LEGAL_COPYRIGHT "Copyright 2020"
 #define LEGAL_TRADEMARKS "© Open Systems Pharmacology Community"
-#define ORIGINAL_FILENAME "OSPSuite.FuncParser.DLL"
-#define PRODUCT_NAME  "FuncParser Module"
+#define ORIGINAL_FILENAME "OSPSuite.FuncParserNative.dll"
+#define PRODUCT_NAME  "OSPSuite FuncParser"
 #define PRODUCT_VERSION VER_FILE_VERSION_STR
 
 
