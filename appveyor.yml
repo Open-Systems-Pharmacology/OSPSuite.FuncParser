@@ -3,23 +3,23 @@ image:
 - Ubuntu1804
 
 # hack until donet patching works with PR
-init: 
-  - cmd: if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
+#init: 
+#  - ps: if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
 
 environment:
   major: 4
   minor: 0
   release: 0
-  app_version: "$(major).$(minor).$(release)"
+  app_version: "$(major).$(minor).$(release).$(APPVEYOR_BUILD_NUMBER)"
 
 version: "$(major).$(minor).$(release).{build}"
 
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  assembly_version: '$(app_version).$(build_number)'
-  file_version: '$(app_version).$(build_number)'
-  informational_version: '$(app_version).$(build_number)'
+  assembly_version: '$(app_version)'
+  file_version: '$(app_version)'
+  informational_version: '$(app_version)'
 
 build_script:
   - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
@@ -39,8 +39,8 @@ before_build:
   - sh: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
 after_build:
-  - cmd: nuget pack src\OSPSuite.FuncParser\OSPSuite.FuncParser.nuspec -version %app_version%.%build_number%
-  - sh: nuget pack src/OSPSuite.FuncParser/OSPSuite.FuncParserUbuntu18.nuspec -version $(app_version).$(build_number)
+  - cmd: nuget pack src\OSPSuite.FuncParser\OSPSuite.FuncParser.nuspec -version %app_version%
+  - sh: nuget pack src/OSPSuite.FuncParser/OSPSuite.FuncParserUbuntu18.nuspec -version $(app_version)
   - ps: Get-ChildItem .\OSPSuite.FuncParser*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 test_script:
