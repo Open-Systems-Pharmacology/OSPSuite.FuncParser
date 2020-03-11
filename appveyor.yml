@@ -17,9 +17,9 @@ version: "$(major).$(minor).$(release).{build}"
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  assembly_version: '$(app_version).$(build_number)'
-  file_version: '$(app_version).$(build_number)'
-  informational_version: '$(app_version).$(build_number)'
+  assembly_version: '$(app_version)'
+  file_version: '$(app_version)'
+  informational_version: '$(app_version)'
 
 build_script:
   - cmd: msbuild OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
