@@ -301,6 +301,19 @@ namespace FuncParserNative
       _parsed = true;
    }
 
+   bool ParsedFunction::TryParse()
+   {
+      try
+      {
+         Parse();
+         return true;
+      }
+      catch(...)
+      {
+         return false;
+      }
+   }
+
    double ParsedFunction::CalcExpression(const DoubleVector& Arg)
    {
       const std::string ERROR_SOURCE = "ParsedFunction::CalcExpression";
@@ -693,6 +706,11 @@ namespace FuncParserNative
          *errorMessage = ErrorMessageFromUnknown("Parse");
          success = false;
       }
+   }
+
+   bool TryParse(ParsedFunction* parsedFunction)
+   {
+      return parsedFunction->TryParse();
    }
 
    double CalcExpression(ParsedFunction* parsedFunction, const double* arguments, int size, bool& success, char** errorMessage)

@@ -78,6 +78,9 @@ namespace OSPSuite.FuncParser
       public static extern void Parse(IntPtr parsedFunction, out bool success, out string errorMessage);
 
       [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
+      public static extern bool TryParse(IntPtr parsedFunction);
+
+      [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
       public static extern double CalcExpression(IntPtr parsedFunction, [In, Out] double[] arguments, int size, out bool success, out string errorMessage);
 
       [DllImport(FuncParserImportDefinitions.NATIVE_DLL, CallingConvention = FuncParserImportDefinitions.CALLING_CONVENTION)]
@@ -188,6 +191,11 @@ namespace OSPSuite.FuncParser
       {
          ParsedFunctionImports.Parse(_parsedFunction, out var success, out var errorMessage);
          evaluateCppCallResult(success, errorMessage);
+      }
+
+      public bool TryParse()
+      {
+         return ParsedFunctionImports.TryParse(_parsedFunction);
       }
 
       public double CalcExpression(IEnumerable<double> arguments)

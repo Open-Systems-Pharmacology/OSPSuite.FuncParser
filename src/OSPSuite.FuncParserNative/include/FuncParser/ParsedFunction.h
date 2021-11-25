@@ -55,6 +55,7 @@ namespace FuncParserNative
       FUNCPARSER_EXPORT const std::string GetStringToParse() const;
       FUNCPARSER_EXPORT void SetStringToParse(const std::string& stringToParse);
       FUNCPARSER_EXPORT void Parse();
+      FUNCPARSER_EXPORT bool TryParse();
       FUNCPARSER_EXPORT double CalcExpression(const DoubleVector& Arg);
       FUNCPARSER_EXPORT std::string GetXMLString(bool InSimplifiedState = true, const std::string& pContainerNodeName = "Rate");
       FUNCPARSER_EXPORT double CalcExpression(double* dArgs, FuncParserErrorData& ED);
@@ -91,6 +92,7 @@ namespace FuncParserNative
       FUNCPARSER_EXPORT const char* GetStringToParse(ParsedFunction* parsedFunction);
       FUNCPARSER_EXPORT void SetStringToParse(ParsedFunction* parsedFunction, const char* stringToParse);
       FUNCPARSER_EXPORT void Parse(ParsedFunction* parsedFunction, bool& success, char** errorMessage);
+      FUNCPARSER_EXPORT bool TryParse(ParsedFunction* parsedFunction);
       FUNCPARSER_EXPORT double CalcExpression(ParsedFunction* parsedFunction, const double* arguments, int size, bool& success, char** errorMessage);
       FUNCPARSER_EXPORT char* GetXMLString(ParsedFunction* parsedFunction, bool& success, char** errorMessage, bool InSimplifiedState = true, const char* containerNodeName = "Rate");
       FUNCPARSER_EXPORT void UpdateFrom(ParsedFunction* srcParsedFunction, ParsedFunction* targetParsedFunction);
