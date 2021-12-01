@@ -206,6 +206,14 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
          partlySimplifiedParsedFunction.CalcExpression(_arguments).ShouldBeEqualTo(expectedValue);
       }
 
+      [Observation]
+      [TestCaseSource(nameof(TestData))]
+      public void should_return_true_when_calling_try_parse_on_a_valid_expression(string stringToParse, double _)
+      {
+         sut.StringToParse = stringToParse;
+         sut.TryParse().ShouldBeTrue();
+      }
+
       [TestCase]
       [Ignore("Required just for Resharper - otherwise no tests are found in the solution")]
       public void Dummy(){}
@@ -245,6 +253,14 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
       {
          sut.StringToParse = stringToParse;
          The.Action(()=>sut.Parse()).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      [TestCaseSource(nameof(InvalidTestData))]
+      public void should_return_false_when_calling_try_parse_on_a_invalid_expression(string stringToParse)
+      {
+         sut.StringToParse = stringToParse;
+         sut.TryParse().ShouldBeFalse();
       }
    }
 
