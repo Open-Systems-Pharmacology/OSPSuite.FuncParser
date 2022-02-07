@@ -11,6 +11,7 @@
 #ifdef _WINDOWS
 #pragma warning( disable : 4996)
 #include <windows.h>
+#include <string>
 #ifdef _DEBUG
 //#include <vld.h> //uncomment to compile with Visual Leak Detector support
 //s. https://github.com/Open-Systems-Pharmacology/OSPSuite.SimModel/wiki/Find-memory-leaks-with-Visual-Leak-Detector
@@ -41,7 +42,7 @@ bool FuncParser::IsNumeric (const std::string & str)
 	return true;
 }
 
-double FuncParser::StringToDouble (const std::string & str)
+double FuncParser::StringToDouble (const std::string & str) const
 {
 	char *end;
 	double x;
@@ -132,7 +133,7 @@ const Constants & FuncParser::GetConstants () const
     return _constants;
 }
 
-bool FuncParser::IsBracketed (const std::string & SubExpr)
+bool FuncParser::IsBracketed (const std::string & SubExpr) const
 {
     long BracketsCount;
     size_t i;
@@ -157,14 +158,16 @@ bool FuncParser::IsBracketed (const std::string & SubExpr)
 	return false;
 }
 
-void FuncParser::RemoveBrackets (std::string & SubExpr)
+std::string FuncParser::RemoveBrackets (const std::string & SubExpr) const
 {
-	while(1)
+   auto expressionWithoutOuterBrackets = SubExpr;
+
+	while(IsBracketed(expressionWithoutOuterBrackets))
 	{
-		if (!IsBracketed(SubExpr))
-			return;
-		SubExpr = SubExpr.substr(1,SubExpr.length()-2);
+      expressionWithoutOuterBrackets = expressionWithoutOuterBrackets.substr(1, expressionWithoutOuterBrackets.length()-2);
 	}
+
+   return expressionWithoutOuterBrackets;
 }
 
 FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vector < std::string > & VariableNames, const std::vector < std::string > & ParameterNames, bool CaseSensitive, bool LogicOperatorsAllowed, double ComparisonTolerance, bool LogicalNumericMixAllowed)
@@ -263,10 +266,10 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 			if ((_ParsedString.find_first_of(conNOTSymbol) != std::string::npos) ||
 			    (_ParsedString.find_first_of(conORSymbol) != std::string::npos) ||
 			    (_ParsedString.find_first_of(conANDSymbol) != std::string::npos) ||
-			    (_ParsedString.find_first_of("<") != std::string::npos) ||
-			    (_ParsedString.find_first_of(">") != std::string::npos) ||
-			    (_ParsedString.find_first_of("!") != std::string::npos) ||
-			    (_ParsedString.find_first_of("=") != std::string::npos))
+			    (_ParsedString.find_first_of('<') != std::string::npos) ||
+			    (_ParsedString.find_first_of('>') != std::string::npos) ||
+			    (_ParsedString.find_first_of('!') != std::string::npos) ||
+			    (_ParsedString.find_first_of('=') != std::string::npos))
 				throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
 				                          "Logical operators are not allowed");
 		}
@@ -298,7 +301,7 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 		//check if numeric/logical operators are not illegally mixed
 		if(LogicOperatorsAllowed && !LogicalNumericMixAllowed)
 		{
-			newNode->IsNumericNode(); //will throw Funcparser exception in case of unallowed mix
+			newNode->IsNumericNode(); //will throw Funcparser exception in case of not allowed mix
 		}
 
 		//no simplifying here!
@@ -329,7 +332,7 @@ FuncNode * FuncParser::Parse (const std::string & ParsedString, const std::vecto
 	return newNode;
 }
 
-void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLevelOfAbstraction LevelOfAbstraction)
+void FuncParser::EvalExpression (FuncNode * SubNode, const std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction) 
 {
 	const char * ERROR_SOURCE = "FuncParser::EvalExpression";
 
@@ -344,19 +347,21 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 		std::string NewOp;
 		std::string NextTerm;
 
+      auto expression = SubExpr;
+
 		if (LevelOfAbstraction == LOA_IF)
-			RemoveBrackets(SubExpr);
+         expression = RemoveBrackets(SubExpr);
 		else
-			if (IsBracketed(SubExpr))
+			if (IsBracketed(expression))
 			{
-				EvalExpression(SubNode, SubExpr, LOA_IF);
+				EvalExpression(SubNode, expression, LOA_IF);
 				return;
 			}
 
 		switch(LevelOfAbstraction)
 		{
 			case LOA_IF:
-				EvalIF(SubNode, SubExpr);
+				EvalIF(SubNode, expression);
 				return;
 			case LOA_OR:
 				EF1 = (*_elemFunctions)[ElemFunction::EF_OR];
@@ -369,18 +374,18 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 				NextLevelOfAbstraction = LOA_NOT;
 				break;
 			case LOA_NOT:
-				EvalNOTOperand(SubNode, SubExpr);
+				EvalNOTOperand(SubNode, expression);
 				return;
 			case LOA_Comparison:
-				EvalComparison(SubNode, SubExpr);
+				EvalComparison(SubNode, expression);
 				return;
 			case LOA_PLUSMINUS:
 				EF1 = (*_elemFunctions)[ElemFunction::EF_PLUS];
 				EF2 = (*_elemFunctions)[ElemFunction::EF_MINUS];
 				NextLevelOfAbstraction = LOA_MULDIV;
 				//replace expression beginning with - (e.g. -2*x+3) with 0-<old expr.>
-				if (SubExpr.substr(0,1) == "-")
-					SubExpr = "0"+SubExpr;
+				if (expression.substr(0,1) == "-")
+					expression = "0"+expression;
 				break;
 			case LOA_MULDIV:
 				EF1 = (*_elemFunctions)[ElemFunction::EF_MUL];
@@ -388,7 +393,7 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 				NextLevelOfAbstraction = LOA_FACTOR;
 				break;
 			case LOA_FACTOR:
-				EvalFactor(SubNode, SubExpr);
+				EvalFactor(SubNode, expression);
 				return;
 		}
 
@@ -399,20 +404,20 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 
 		if ((LevelOfAbstraction == LOA_PLUSMINUS) || (LevelOfAbstraction == LOA_MULDIV))
 		{
-			RearrangeTerms(SubExpr, LevelOfAbstraction, Op1, Op2);
+			RearrangeTerms(expression, LevelOfAbstraction, Op1, Op2);
 		}
 
-		while(1)
+		while(true)
 		{
 			// get next term
-			NextTerm = GetNextTerm(SubExpr, LevelOfAbstraction, Op1, Op2, FirstPos, NewOp);
+			NextTerm = GetNextTerm(expression, LevelOfAbstraction, Op1, Op2, FirstPos, NewOp);
 
-			if (NewOp == "")
+			if (NewOp.empty())
 			{
 				// last term found
 				if (FirstTerm)
 				{
-					EvalExpression(SubNode, SubExpr, NextLevelOfAbstraction);
+					EvalExpression(SubNode, expression, NextLevelOfAbstraction);
 				}
 				else
 				{
@@ -458,7 +463,7 @@ void FuncParser::EvalExpression (FuncNode * SubNode, std::string SubExpr, enmLev
 
 }
 
-void FuncParser::EvalNOTOperand (FuncNode * SubNode, std::string SubExpr)
+void FuncParser::EvalNOTOperand (FuncNode * SubNode, const std::string & SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalNOTOperand";
 
@@ -486,7 +491,7 @@ void FuncParser::EvalNOTOperand (FuncNode * SubNode, std::string SubExpr)
 	}
 }
 
-void FuncParser::EvalComparison (FuncNode * SubNode, std::string SubExpr)
+void FuncParser::EvalComparison (FuncNode * SubNode, const std::string & SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalComparison";
 
@@ -567,7 +572,7 @@ void FuncParser::EvalComparison (FuncNode * SubNode, std::string SubExpr)
 
 }
 
-void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr)
+void FuncParser::EvalFactor (FuncNode * SubNode, const std::string & SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalFactor";
 
@@ -599,9 +604,9 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr)
 		//check, if SubExpr is a^b
         CharPos = std::string::npos;
 
-		while(1)
+		while(true)
 		{
-			CharPos = SubExpr.find_first_of("^",CharPos + 1);
+			CharPos = SubExpr.find_first_of('^',CharPos + 1);
             if (CharPos == std::string::npos)
 				break;
 			if (CharPos == 0)
@@ -641,7 +646,7 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr)
 		//check if variable with argument <Var>(<Expr>)
 		if (SubExpr.substr(SubExpr.length()-1,1) == ")")
 		{
-			CharPos = SubExpr.find_first_of("(");
+			CharPos = SubExpr.find_first_of('(');
 			if (CharPos > 0)
 			{
 				VarName = SubExpr.substr(0,CharPos);
@@ -694,7 +699,7 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr)
 		if (SubExpr.substr(SubExpr.length()-1,1) != ")")
 			throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
 			                          "Invalid Expression");
-		CharPos = SubExpr.find_first_of("(");
+		CharPos = SubExpr.find_first_of('(');
         if (CharPos == std::string::npos)
 			throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
 			                          "Invalid Expression");
@@ -783,7 +788,7 @@ void FuncParser::EvalFactor (FuncNode * SubNode, std::string SubExpr)
 
 }
 
-void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr)
+void FuncParser::EvalIF (FuncNode * SubNode, const std::string & SubExpr)
 {
 	const std::string ERROR_SOURCE = "FuncParser::EvalIF";
 	const std::string Op1 = "?";
@@ -797,7 +802,7 @@ void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr)
 
 		IfStatement = GetNextTerm(SubExpr, LOA_IF, Op1, Op1, FirstPos,NewOp);
 
-		if (NewOp == "") //no "?" found ==> not an if..then..else
+		if (NewOp.empty()) //no "?" found ==> not an if..then..else
 		{
 			EvalExpression(SubNode, SubExpr, LOA_OR);
 			return;
@@ -806,11 +811,11 @@ void FuncParser::EvalIF (FuncNode * SubNode, std::string SubExpr)
 		//"?" found - check if subexpression has form a ? b : c
 		ThenStatement = GetNextTerm(SubExpr, LOA_IF, Op2, Op2, FirstPos,NewOp);
 
-		if (NewOp != "")
+		if (!NewOp.empty())
 			ElseStatement = GetNextTerm(SubExpr, LOA_IF, Op1, Op2, FirstPos,NewOp);
 
 		//check if subexpression is correct
-		if ((IfStatement == "") || (ThenStatement == "") || (ElseStatement == "") || (NewOp != ""))
+		if ((IfStatement.empty()) || (ThenStatement.empty()) || (ElseStatement.empty()) || (!NewOp.empty()))
 			throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
 			                          "Invalid IF statement (must be <IfPart> ? <ThenPart> : <ElsePart>)");
 
@@ -853,12 +858,12 @@ void FuncParser::CheckVarParamNames (const std::vector < std::string > & Variabl
 			std::string VarName = VariableNames[i];
 
 			//check if variable name is not empty
-			if (VarName == "")
+			if (VarName.empty())
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Variable name may not be empty");
 
 			//check if variable name doesn't contain illegal characters
-			if ((long)(VarName.find_first_of(IllegalChars)) >= 0)
+			if (VarName.find_first_of(IllegalChars) != std::string::npos)
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Variable name '"+VarName+"' contains illegal character(s)\n"+
 				                          "Illegal characters are "+IllegalChars+" and blank");
@@ -898,12 +903,12 @@ void FuncParser::CheckVarParamNames (const std::vector < std::string > & Variabl
 			std::string ParamName = ParameterNames[i];
 
 			//check if parameter name is not empty
-			if (ParamName == "")
+			if (ParamName.empty())
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Parameter name may not be empty");
 
 			//check if parameter name doesn't contain illegal characters
-			if ((long)(ParamName.find_first_of(IllegalChars)) >= 0)
+			if (ParamName.find_first_of(IllegalChars) != std::string::npos)
 				throw FuncParserErrorData(FuncParserErrorData::err_BADARG, ERROR_SOURCE,
 				                          "Parameter name '"+ParamName+"' contains illegal character(s)\n"+
 				                          "Illegal characters are "+IllegalChars+" and blank");
@@ -959,7 +964,7 @@ void FuncParser::CheckVarParamNames (const std::vector < std::string > & Variabl
 
 bool FuncParser::IsScientificNumber (const std::string & SubExpr, size_t OpPos)
 {
-    if ((OpPos>=2) && (OpPos<=(long)SubExpr.length()-2))
+    if ((OpPos>=2) && (OpPos<=SubExpr.length()-2))
 	{
 		char PreChar1 = SubExpr[OpPos-1];
 		char PreChar2 = SubExpr[OpPos-2];
@@ -984,7 +989,7 @@ bool FuncParser::IsScientificNumber (const std::string & SubExpr, size_t OpPos)
 				if ((long)Delimiters.find_first_of(PreChar1) >= 0)
 					break;
 				else
-					return false;  //1st non-numeric char is NOT a delimiter ==> string is not a number in scientif. not.
+					return false;  //1st non-numeric char is NOT a delimiter ==> string is not a number in scientific notation
 			}
 
 			//search for the first non-numeric character AFTER and check if it is any delimiter
@@ -996,7 +1001,7 @@ bool FuncParser::IsScientificNumber (const std::string & SubExpr, size_t OpPos)
 				if ((long)Delimiters.find_first_of(PostChar) >= 0)
 					break;
 				else
-					return false; //1st non-numeric char is NOT a delimiter ==> string is not a number in scientif. not.
+					return false; //1st non-numeric char is NOT a delimiter ==> string is not a number in scientific notation
 			}
 
 			return true;
@@ -1008,7 +1013,8 @@ bool FuncParser::IsScientificNumber (const std::string & SubExpr, size_t OpPos)
 		return false;
 }
 
-void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, std::string Op1, std::string Op2)
+void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, const std::string & Op1,
+                                 const std::string & Op2)
 {
 	const char * ERROR_SOURCE = "FuncParser::RearrangeTerms";
 
@@ -1023,7 +1029,7 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
         size_t i;
 
 		// parse expression and put the terms in 2 lists depending on their operand
-		while(1)
+		while(true)
 		{
 			NextTerm = GetNextTerm(SubExpr, LevelOfAbstraction, Op1, Op2, FirstPos, NewOp);
 
@@ -1043,7 +1049,7 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
 			}
 
 			// check if last term and exit loop if so
-			if (NewOp == "")
+			if (NewOp.empty())
 				break;
 
 			// remember current operand for the next loop cycle
@@ -1051,7 +1057,7 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
 		}
 
 		// check if rearrangement required (at least one <Op2> found)
-		if (Op2_Terms.size() == 0)
+		if (Op2_Terms.empty())
 			return;
 
 		// ------------------------------------------------
@@ -1087,7 +1093,8 @@ void FuncParser::RearrangeTerms (std::string & SubExpr, enmLevelOfAbstraction Le
 	}
 }
 
-std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, std::string Op1, std::string Op2, size_t & FirstPos, std::string & NewOp)
+std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbstraction LevelOfAbstraction, const std::string
+                                     & Op1, const std::string & Op2, size_t & FirstPos, std::string & NewOp)
 {
 	// ______________________________________________________________________________________________________________________________
 	// Parses the string <SubExpr> starting at <FirstPos> till <Op1> or <Op2> is found (or the end of the string is reached)
@@ -1118,14 +1125,14 @@ std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbst
 		NewOp = "";
 
 		// if <FirstPos> is beyond the end of expression - return empty string
-        if(FirstPos >= (long)SubExpr.length())
+        if(FirstPos >= SubExpr.length())
 			return "";
 
 		// go along the expression <SubExpr> till <Op1> or <Op2> is found (or the end of the string is reached)
-		while(1)
+		while(true)
 		{
 			// check if the end of the string was not reached
-            if(LastPos >= (long)SubExpr.length())
+            if(LastPos >= SubExpr.length())
 				break;
 
 			// read next char and analyze it
@@ -1149,14 +1156,14 @@ std::string FuncParser::GetNextTerm (const std::string & SubExpr, enmLevelOfAbst
 		}
 
 		// check that expression does not end with an operand
-        if (LastPos == (long)SubExpr.length()-1)
+        if (LastPos == SubExpr.length()-1)
 			throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
 			                          "Expression ends with "+NextCharacter);
 
 		// check [No. of opening brackets = No. of closing brackets]
 		if (BracketsCount != 0)
 			throw FuncParserErrorData(FuncParserErrorData::err_PARSE, ERROR_SOURCE,
-			                          "Wrong bracketness");
+			                          "Wrong bracketing");
 
 		// get next term
 		NextTerm = SubExpr.substr(FirstPos, LastPos-FirstPos);
