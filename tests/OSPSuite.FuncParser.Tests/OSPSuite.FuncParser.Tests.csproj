@@ -4,6 +4,7 @@
     <IsPackable>false</IsPackable>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <RootNamespace>OSPSuite.FuncParser.Tests</RootNamespace>
+    <Configurations>Debug;Release;Purify_Debug</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />

@@ -129,6 +129,18 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
             "1e-3+2e-2-3e-1",
             1e-3 + 2e-2 - 3e-1
          };
+
+         yield return new object[]
+         {
+            "((x+y))",
+            x+y
+         };
+
+         yield return new object[]
+         {
+            "((x+y)-200*(300+1))",
+            ((x+y)-200*(300+1))
+         };
       }
 
       protected static IEnumerable<string> InvalidTestData()

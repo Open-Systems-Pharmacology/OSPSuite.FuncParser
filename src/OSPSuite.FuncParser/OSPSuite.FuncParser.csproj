@@ -18,6 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Copyright>© Open Systems Pharmacology Community 2020</Copyright>
     <Product>OSPSuite FuncParser</Product>
+    <Configurations>Debug;Release;Purify_Debug</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
