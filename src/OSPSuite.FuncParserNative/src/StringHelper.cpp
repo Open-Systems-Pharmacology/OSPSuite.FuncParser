@@ -7,6 +7,12 @@ namespace FuncParserNative
 
 std::string StringHelper::Capitalize (const std::string & pInString)
 {
+    // return early if the string is empty; nothing to change in this case
+    if (pInString.empty())
+    {
+        return pInString;
+    }
+
     std::string newString = pInString;
 
     // *only* the first character should be uppercase
