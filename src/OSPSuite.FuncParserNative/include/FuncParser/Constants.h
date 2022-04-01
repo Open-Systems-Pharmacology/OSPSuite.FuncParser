@@ -9,13 +9,7 @@
 #include <map>
 #include <string>
 #include "FuncParser/Constant.h"
-#ifdef _WINDOWS
-#include <ymath.h>
-
-#endif
-#ifdef linux
 #include <cmath>
-#endif
 
 #include "FuncParser/FuncParserTypeDefs.h"
 

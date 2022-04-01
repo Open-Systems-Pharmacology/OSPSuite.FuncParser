@@ -2,10 +2,7 @@
 #include "FuncParser/FuncParserErrorData.h"
 #include "FuncParser/Constant.h"
 #include <vector>
-
-#ifdef _WINDOWS
-#include <math.h>
-#endif
+#include <cmath>
 
 namespace FuncParserNative
 {
