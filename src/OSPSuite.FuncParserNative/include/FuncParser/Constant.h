@@ -14,7 +14,7 @@ class Constant
 		double _value;
 	
 	public:
-		Constant (const std::string & Name, double Value);
+		explicit Constant (const std::string & Name, double Value);
 		const std::string & GetName () const ;
 		const double GetValue () const;
 };
