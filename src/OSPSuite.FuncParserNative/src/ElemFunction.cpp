@@ -12,16 +12,17 @@ namespace FuncParserNative
 {
 
 // --------------------  ELEMFUNCTION -----------------------------------------------
-ElemFunction::ElemFunction (enmElemFunctionType pType, const std::string & pFuncString, bool pIsLogical, bool pIsUnary)
+ElemFunction::ElemFunction (enmElemFunctionType pType, const std::string & pFuncString, bool pIsLogical, bool pIsUnary) :
+	_type { pType },
+	_funcString { pFuncString },
+	_isLogical { pIsLogical },
+	_isUnary { pIsUnary }
 {
-	_type = pType;
-	_funcString = pFuncString;
-	_isLogical = pIsLogical;
-	_isUnary = pIsUnary;
 }
 
 ElemFunction::~ElemFunction ()
-{}
+{
+}
 
 const std::string & ElemFunction::GetFuncString () const
 {

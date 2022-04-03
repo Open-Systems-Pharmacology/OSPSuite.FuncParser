@@ -11,15 +11,16 @@ namespace FuncParserNative
 
 	DimensionInfo::DimensionInfo(double length, double mass, double time, 
   							     double electricCurrent, double temperature, 
-								 double amount, double luminousIntensity)
+								 double amount, double luminousIntensity) :
+		_length{ length }, 
+		_mass{ mass }, 
+		_time{ time },
+		_electricCurrent{ electricCurrent },
+		_temperature{ temperature },
+		_amount{ amount },
+		_luminousIntensity{ luminousIntensity }
 	{
-		_length = length;
-		_mass = mass;
-		_time = time;
-		_electricCurrent = electricCurrent;
-		_temperature = temperature;
-		_amount = amount;
-		_luminousIntensity = luminousIntensity;
+
 	}
 	
 	//set all exponents=0 (unitless dimension)

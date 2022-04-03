@@ -10,11 +10,11 @@ FuncParserErrorData::FuncParserErrorData ()
 	_description = "";
 }
 
-FuncParserErrorData::FuncParserErrorData (errNumber Number, const std::string & Source, const std::string & Description)
+FuncParserErrorData::FuncParserErrorData (errNumber Number, const std::string & Source, const std::string & Description) :
+	_number{ Number },
+	_source{ Source },
+	_description{ Description }
 {
-	_number = Number;
-	_source = Source;
-	_description = Description;
 }
 
 const FuncParserErrorData::errNumber FuncParserErrorData::GetNumber () const

@@ -9,10 +9,10 @@ namespace FuncParserNative
 	}
 
 	QuantityDimensionInfo::QuantityDimensionInfo(const string & quantityName, 
-	 	                                         const DimensionInfo & dimensionInfo)
+	 	                                         const DimensionInfo & dimensionInfo) :
+		_quantityName { quantityName },
+		_dimensionInfo { dimensionInfo }
 	{
-		_quantityName = quantityName;
-		_dimensionInfo = dimensionInfo;
 	}
 
 	const string & QuantityDimensionInfo::GetQuantityName() const
