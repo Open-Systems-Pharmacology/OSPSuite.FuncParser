@@ -5,8 +5,8 @@ namespace FuncParserNative
 {
 
 	Constant::Constant(const std::string& Name, double Value) :
-		_name{ Name }, 
-		_value{ Value } 
+		_name{ Name },
+		_value{ Value }
 	{
 	}
 
