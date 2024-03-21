@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <RootNamespace>OSPSuite.FuncParser.Tests</RootNamespace>
@@ -8,8 +8,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
   </ItemGroup>
   <ItemGroup>

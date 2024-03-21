@@ -226,9 +226,6 @@ namespace OSPSuite.FuncParser.ParsedFunctionTests
          sut.TryParse().ShouldBeTrue();
       }
 
-      [TestCase]
-      [Ignore("Required just for Resharper - otherwise no tests are found in the solution")]
-      public void Dummy(){}
    }
 
    public class when_getting_xml_string : concern_for_ParsedFunction

@@ -1,6 +1,6 @@
 image: 
-- Visual Studio 2019
-- Ubuntu1804
+- Visual Studio 2022
+- Ubuntu2204
 
 environment:
   major: 4
@@ -36,7 +36,7 @@ before_build:
 
 after_build:
   - cmd: nuget pack src\OSPSuite.FuncParser\OSPSuite.FuncParser.nuspec -version %app_version%
-  - sh: nuget pack src/OSPSuite.FuncParser/OSPSuite.FuncParserUbuntu18.nuspec -version $app_version
+  - sh: nuget pack src/OSPSuite.FuncParser/OSPSuite.FuncParserUbuntu22.nuspec -version $app_version
   - ps: Get-ChildItem .\OSPSuite.FuncParser*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 test_script:
