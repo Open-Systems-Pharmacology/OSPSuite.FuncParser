@@ -5,21 +5,14 @@
 #include <ymath.h>
 #include <float.h>
 #endif
-#ifdef linux
 #include <cmath>
-#endif
 
 namespace FuncParserNative
 {
 
 double Math::GetNaN ()
 {
-#ifdef _WINDOWS
-	return _Nan._Double;
-#endif
-#ifdef linux 
 	return NAN;
-#endif
 }
 
 bool Math::IsNaN (double d)
@@ -34,12 +27,7 @@ bool Math::IsNaN (double d)
 
 double Math::GetInf ()
 {
-#ifdef _WINDOWS
-	return _Inf._Double;
-#endif
-#ifdef linux
 	return INFINITY;
-#endif
 }
 
 double Math::GetNegInf ()
