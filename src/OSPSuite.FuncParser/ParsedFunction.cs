@@ -8,11 +8,10 @@ namespace OSPSuite.FuncParser
 {
    internal static class FuncParserImportDefinitions
    {
-
-#if _WINDOWS
+#if NETFRAMEWORK
       public const String NATIVE_DLL = "OSPSuite.FuncParserNative.dll";
 #else
-      public const String NATIVE_DLL = "libOSPSuite.FuncParserNative.so";
+      public const String NATIVE_DLL = "OSPSuite.FuncParserNative";
 #endif
 
       public const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
