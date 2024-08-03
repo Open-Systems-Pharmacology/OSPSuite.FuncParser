@@ -15,7 +15,9 @@
 #ifdef linux
 #define FUNCPARSER_EXPORT 
 #endif
-
+#ifdef __APPLE__
+#define FUNCPARSER_EXPORT 
+#endif
 
 namespace FuncParserNative
 {

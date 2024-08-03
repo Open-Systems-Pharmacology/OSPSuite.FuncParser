@@ -18,11 +18,21 @@
     <DebugSymbols>true</DebugSymbols>
     <Copyright>© Open Systems Pharmacology Community 2020</Copyright>
     <Product>OSPSuite FuncParser</Product>
-    <Configurations>Debug;Release;Purify_Debug</Configurations>
+    <Configurations>Debug;Release;Purify_Debug</Configurations> 
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <DefineConstants>_WINDOWS</DefineConstants>
+    <NuspecFile>OSPSuite.FuncParser.nuspec</NuspecFile> 
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <NuspecFile>OSPSuite.FuncParserUbuntu22.nuspec</NuspecFile> 
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <NuspecFile>OSPSuite.FuncParserMacOS.nuspec</NuspecFile> 
+    <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
   </PropertyGroup>
 
   <ItemGroup>

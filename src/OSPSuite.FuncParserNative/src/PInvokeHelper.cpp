@@ -12,6 +12,10 @@
 #define CoTaskMemAlloc malloc
 #endif
 
+#ifdef __APPLE__
+#define STRCPY(DEST, LENGTH, SOURCE) strcpy(DEST, SOURCE)
+#define CoTaskMemAlloc malloc
+#endif 
 namespace FuncParserNative
 {
    using namespace std;
