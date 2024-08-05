@@ -9,7 +9,7 @@
     <Configurations>Debug;Release;Purify_Debug</Configurations>
   </PropertyGroup>
 
-	<Target Name="PostBuildLinux" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+	<Target Name="PostBuildMac" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
 		<Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/x64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
 	</Target>
 
