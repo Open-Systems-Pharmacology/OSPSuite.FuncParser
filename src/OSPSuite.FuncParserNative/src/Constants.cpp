@@ -7,6 +7,10 @@
 #include <math.h>
 #endif
 
+#ifdef __APPLE__
+#include <math.h>
+#endif
+
 namespace FuncParserNative
 {
 
