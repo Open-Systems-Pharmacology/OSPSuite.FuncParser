@@ -36,8 +36,8 @@ before_build:
   - sh: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
 after_build:
-  - cmd: dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=%app_version%
-  - sh: dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=$app_version
+  - cmd: dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=%app_version% -o ./
+  - sh: dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=$app_version -o ./
   - ps: Get-ChildItem .\OSPSuite.FuncParser*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 test_script:
