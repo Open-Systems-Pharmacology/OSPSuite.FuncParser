@@ -3,6 +3,13 @@ name: Build and Publish NuGet Package
 on:
   push
 
+env:
+  MAJOR: 4
+  MINOR: 0
+  RELEASE: 0
+  RUN: ${{ github.run_number }}
+  APP_VERSION: ${{env.MAJOR}}.${{env.MINOR}}.${{env.RELEASE}}.${{ env.RUN }}
+
 jobs:
   build:
     runs-on: macos-latest
@@ -15,6 +22,14 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
+
+      - name: Update version.h
+        run: |
+          sed -i '' -e "s/RELEASE 0/RELEASE ${{env.RELEASE}}/g" \
+                     -e "s/MAJOR 0/MAJOR ${{env.MAJOR}}/g" \
+                     -e "s/MINOR 0/MINOR ${{env.MINOR}}/g" \
+                     -e "s/BUILD 0/BUILD ${{ env.RUN }}/g" \
+                     src/OSPSuite.FuncParserNative/version.h
 
       - name: Remove Native Project for macOS
         run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
@@ -44,7 +59,7 @@ jobs:
         run: dotnet test --configuration Debug --no-build
 
       - name: Pack the project
-        run: dotnet pack src/OSPSuite.FuncParser/ -o ./
+        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Publish to GitHub Packages
-        run: dotnet nuget push ./nupkgs/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
+      # - name: Publish to GitHub Packages
+      #   run: dotnet nuget push ./nupkgs/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
