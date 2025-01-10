@@ -32,8 +32,8 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release --no-build
 
-      # - name: Pack the project
-      #   run: dotnet pack --configuration Release --output ./nupkgs
+      - name: Pack the project
+        run: dotnet pack --configuration Release --output ./nupkgs
 
-      # - name: Publish to GitHub Packages
-      #   run: dotnet nuget push ./nupkgs/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GitHub Packages
+        run: dotnet nuget push ./nupkgs/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
