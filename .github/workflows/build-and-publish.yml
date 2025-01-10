@@ -194,6 +194,9 @@ jobs:
         run: |
           (get-content src\OSPSuite.FuncParserNative\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE $env:RELEASE" -replace "MAJOR 0", "MAJOR $env:MAJOR" -replace "MINOR 0", "MINOR $env:MINOR" -replace "BUILD 0", "BUILD $env:APPVEYOR_BUILD_NUMBER"} | set-content src\OSPSuite.FuncParserNative\version.h
 
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
       - name: build release
         run: msbuild OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=x64
 
