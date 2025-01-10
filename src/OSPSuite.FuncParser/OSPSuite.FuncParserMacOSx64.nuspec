@@ -2,7 +2,7 @@
 <package >
   <metadata>    
     <description>Function Parser</description>
-    <id>OSPSuite.FuncParser.MacOS</id>
+    <id>OSPSuite.FuncParser.MacOS.x64</id>
     <version>$version$</version>
     <title>OSPSuite.FuncParser</title>
     <authors>Open-Systems-Pharmacology</authors>

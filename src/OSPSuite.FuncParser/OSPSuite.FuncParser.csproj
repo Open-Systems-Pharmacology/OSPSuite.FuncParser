@@ -31,8 +31,12 @@
     <NuspecFile>OSPSuite.FuncParserUbuntu22.nuspec</NuspecFile> 
   </PropertyGroup>
 
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
-    <NuspecFile>OSPSuite.FuncParserMacOS.nuspec</NuspecFile> 
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+    <NuspecFile>OSPSuite.FuncParserMacOSx64.nuspec</NuspecFile> 
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
+    <NuspecFile>OSPSuite.FuncParserMacOSArm64.nuspec</NuspecFile> 
   </PropertyGroup>
 
   <ItemGroup>
