@@ -64,5 +64,5 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      # - name: Publish to GitHub Packages
-      #   run: dotnet nuget push ./nupkgs/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GitHub registry
+        run: dotnet nuget push ./nupkgs/*.nupkg --skip-duplicate --no-symbols true
