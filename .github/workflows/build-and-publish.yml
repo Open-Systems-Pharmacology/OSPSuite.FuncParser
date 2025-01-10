@@ -10,7 +10,7 @@ env:
   RUN: ${{ github.run_number }}
 
 jobs:
-  build-macos-arm:
+  build-macos-arm64:
     runs-on: macos-latest
 
     steps:
@@ -210,4 +210,4 @@ jobs:
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
       - name: Publish to GitHub registry
-        run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet nuget push ./OSPSuite.FuncParser/*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
