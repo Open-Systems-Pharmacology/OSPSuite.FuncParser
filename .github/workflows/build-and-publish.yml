@@ -28,10 +28,10 @@ jobs:
 
       - name: Update version.h
         run: |
-          sed -i '' -e "s/RELEASE 0/RELEASE ${{env.RELEASE}}/g" \
-                     -e "s/MAJOR 0/MAJOR ${{env.MAJOR}}/g" \
-                     -e "s/MINOR 0/MINOR ${{env.MINOR}}/g" \
-                     -e "s/BUILD 0/BUILD ${{ env.RUN }}/g" \
+          LC_ALL=C sed -i '' -e "s@RELEASE 0@RELEASE ${{env.RELEASE}}@g" \
+                     -e "s@MAJOR 0@MAJOR ${{env.MAJOR}}@g" \
+                     -e "s@MINOR 0@MINOR ${{env.MINOR}}@g" \
+                     -e "s@BUILD 0@BUILD ${{ env.RUN }}@g" \
                      src/OSPSuite.FuncParserNative/version.h
 
       - name: Remove Native Project for macOS
