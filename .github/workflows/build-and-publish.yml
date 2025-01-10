@@ -19,18 +19,29 @@ jobs:
       - name: Remove Native Project for macOS
         run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
-      - name: Configure the native build
+      - name: Configure the native build (release)
         run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
+
+      - name: Configure the native build (debug)
+        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
       
-      - name: Build native libraries
+      - name: Build native libraries (release)
         run: make -C Build/Release/x64
+
+      - name: Build native libraries (debug)
+        run: make -C Build/Debug/x64
         
-      - name: Build the project
+      - name: Build the project (release)
         run: dotnet build OSPSuite.FuncParser.sln --configuration Release
 
+      - name: Build the project (debug)
+        run: dotnet build OSPSuite.FuncParser.sln --configuration Debug
 
-      - name: Test
+      - name: Test (release)
         run: dotnet test --configuration Release --no-build
+
+      - name: Test (debug)
+        run: dotnet test --configuration Debug --no-build
 
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./
