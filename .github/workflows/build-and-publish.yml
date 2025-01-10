@@ -23,7 +23,7 @@ jobs:
         run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
 
       - name: Configure the native build (debug)
-        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -BBuild/Debug/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
       
       - name: Build native libraries (release)
         run: make -C Build/Release/x64
