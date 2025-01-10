@@ -65,4 +65,4 @@ jobs:
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
       - name: Publish to GitHub registry
-        run: dotnet nuget push ./nupkgs/*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/felixmil/index.json --skip-duplicate --no-symbols
+        run: dotnet nuget push ./nupkgs/*.nupkg --source ${{ env.REPOSITORY_URL }} --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate --no-symbols true
