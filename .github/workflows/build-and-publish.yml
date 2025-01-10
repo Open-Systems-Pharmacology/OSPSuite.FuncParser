@@ -38,16 +38,16 @@ jobs:
         run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
       - name: Configure the native build (release)
-        run: cmake -BBuild/Release/arm64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
 
       - name: Configure the native build (debug)
-        run: cmake -BBuild/Debug/arm64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -BBuild/Debug/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
       
       - name: Build native libraries (release)
-        run: make -C Build/Release/arm64
+        run: make -C Build/Release/x64
 
       - name: Build native libraries (debug)
-        run: make -C Build/Debug/arm64
+        run: make -C Build/Debug/x64
         
       - name: Build the project (release)
         run: dotnet build OSPSuite.FuncParser.sln --configuration Release
@@ -198,10 +198,10 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: build release
-        run: msbuild OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=x64
+        run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Release /p:Platform=x64
 
       - name: build debug
-        run: msbuild OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64
+        run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Debug /p:Platform=x64
 
       - name: Test
         run: dotnet test --no-build --no-restore
