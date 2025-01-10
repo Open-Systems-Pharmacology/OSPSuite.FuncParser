@@ -18,7 +18,7 @@ jobs:
       #     dotnet nuget add source --name github --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
 
       - name: Build the project
         run: dotnet build --configuration Release
