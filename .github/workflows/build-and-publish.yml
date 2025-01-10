@@ -151,11 +151,24 @@ jobs:
       - name: Remove Native Project for Linux
         run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
+        
+      - name: Configure the native build (release)
+        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release
+
+      - name: Configure the native build (debug)
+        run: cmake -BBuild/Debug/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug
+      
+      - name: Build native libraries (release)
+        run: make -C Build/Release/x64
+
+      - name: Build native libraries (debug)
+        run: make -C Build/Debug/x64
+
       - name: Build the project (release)
-        run: dotnet build OSPSuite.FuncParser.sln --configuration Release
+        run: dotnet build OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=x64
 
       - name: Build the project (debug)
-        run: dotnet build OSPSuite.FuncParser.sln --configuration Debug
+        run: dotnet build OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64
 
       - name: Test (release)
         run: dotnet test --configuration Release --no-build
