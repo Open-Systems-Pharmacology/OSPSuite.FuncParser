@@ -1,0 +1,171 @@
+name: Build and Publish NuGet Package for macOS (ARM64)
+
+on:
+  push
+
+env:
+  MAJOR: 4
+  MINOR: 0
+  RELEASE: 0
+  RUN: ${{ github.run_number }}
+
+jobs:
+  build-macos-arm:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: define env variables
+        run: |
+          echo "APP_VERSION=${{env.MAJOR}}.${{env.MINOR}}.${{env.RELEASE}}.${{ env.RUN }}" >> $GITHUB_ENV
+
+      - name: Restore dependencies
+        run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
+
+      - name: Update version.h
+        run: |
+          LC_ALL=C sed -i '' -e "s@RELEASE 0@RELEASE ${{env.RELEASE}}@g" \
+                     -e "s@MAJOR 0@MAJOR ${{env.MAJOR}}@g" \
+                     -e "s@MINOR 0@MINOR ${{env.MINOR}}@g" \
+                     -e "s@BUILD 0@BUILD ${{ env.RUN }}@g" \
+                     src/OSPSuite.FuncParserNative/version.h
+
+      - name: Remove Native Project for macOS
+        run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
+
+      - name: Configure the native build (release)
+        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
+
+      - name: Configure the native build (debug)
+        run: cmake -BBuild/Debug/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
+      
+      - name: Build native libraries (release)
+        run: make -C Build/Release/x64
+
+      - name: Build native libraries (debug)
+        run: make -C Build/Debug/x64
+        
+      - name: Build the project (release)
+        run: dotnet build OSPSuite.FuncParser.sln --configuration Release
+
+      - name: Build the project (debug)
+        run: dotnet build OSPSuite.FuncParser.sln --configuration Debug
+
+      - name: Test (release)
+        run: dotnet test --configuration Release --no-build
+
+      - name: Test (debug)
+        run: dotnet test --configuration Debug --no-build
+
+      - name: Pack the project
+        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
+
+      - name: Publish to GitHub registry
+        run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos-x64:
+    runs-on: macos-13
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: define env variables
+        run: |
+          echo "APP_VERSION=${{env.MAJOR}}.${{env.MINOR}}.${{env.RELEASE}}.${{ env.RUN }}" >> $GITHUB_ENV
+
+      - name: Restore dependencies
+        run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
+
+      - name: Update version.h
+        run: |
+          LC_ALL=C sed -i '' -e "s@RELEASE 0@RELEASE ${{env.RELEASE}}@g" \
+                     -e "s@MAJOR 0@MAJOR ${{env.MAJOR}}@g" \
+                     -e "s@MINOR 0@MINOR ${{env.MINOR}}@g" \
+                     -e "s@BUILD 0@BUILD ${{ env.RUN }}@g" \
+                     src/OSPSuite.FuncParserNative/version.h
+
+      - name: Remove Native Project for macOS
+        run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
+
+      - name: Configure the native build (release)
+        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=x86_64
+
+      - name: Configure the native build (debug)
+        run: cmake -BBuild/Debug/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=x86_64
+      
+      - name: Build native libraries (release)
+        run: make -C Build/Release/x64
+
+      - name: Build native libraries (debug)
+        run: make -C Build/Debug/x64
+        
+      - name: Build the project (release)
+        run: dotnet build OSPSuite.FuncParser.sln --configuration Release
+
+      - name: Build the project (debug)
+        run: dotnet build OSPSuite.FuncParser.sln --configuration Debug
+
+      - name: Test (release)
+        run: dotnet test --configuration Release --no-build
+
+      - name: Test (debug)
+        run: dotnet test --configuration Debug --no-build
+
+      - name: Pack the project
+        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
+
+      - name: Publish to GitHub registry
+        run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux-x64:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: define env variables
+        run: |
+          echo "APP_VERSION=${{env.MAJOR}}.${{env.MINOR}}.${{env.RELEASE}}.${{ env.RUN }}" >> $GITHUB_ENV
+
+      - name: Restore dependencies
+        run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
+
+      - name: Update version.h
+        run: |
+          LC_ALL=C sed -i '' -e "s@RELEASE 0@RELEASE ${{env.RELEASE}}@g" \
+                     -e "s@MAJOR 0@MAJOR ${{env.MAJOR}}@g" \
+                     -e "s@MINOR 0@MINOR ${{env.MINOR}}@g" \
+                     -e "s@BUILD 0@BUILD ${{ env.RUN }}@g" \
+                     src/OSPSuite.FuncParserNative/version.h
+
+      - name: Remove Native Project for Linux
+        run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
+
+      - name: Build the project (release)
+        run: dotnet build OSPSuite.FuncParser.sln --configuration Release
+
+      - name: Build the project (debug)
+        run: dotnet build OSPSuite.FuncParser.sln --configuration Debug
+
+      - name: Test (release)
+        run: dotnet test --configuration Release --no-build
+
+      - name: Test (debug)
+        run: dotnet test --configuration Debug --no-build
+
+      - name: Pack the project        
+        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
+
+      - name: Publish to GitHub registry
+        run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+        
