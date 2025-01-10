@@ -140,12 +140,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
 
-      - name: install sed
-        run: sudo apt-get install sed
-
       - name: Update version.h
         run: |
-          sed -i '' -e "s/RELEASE 0/RELEASE ${{env.RELEASE}}/g" \
+          sed -i -e "s/RELEASE 0/RELEASE ${{env.RELEASE}}/g" \
                      -e "s/MAJOR 0/MAJOR ${{env.MAJOR}}/g" \
                      -e "s/MINOR 0/MINOR ${{env.MINOR}}/g" \
                      -e "s/BUILD 0/BUILD ${{ env.RUN }}/g" \
