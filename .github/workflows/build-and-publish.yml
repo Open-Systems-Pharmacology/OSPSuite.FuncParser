@@ -184,7 +184,7 @@ jobs:
 
       - name: define env variables
         run: |
-          echo "APP_VERSION=${{env.MAJOR}}.${{env.MINOR}}.${{env.RELEASE}}.${{ env.RUN }}" >> $GITHUB_ENV
+          echo "APP_VERSION=${{env.MAJOR}}.${{env.MINOR}}.${{env.RELEASE}}.${{ env.RUN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Restore dependencies
         run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
