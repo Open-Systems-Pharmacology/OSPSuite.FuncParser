@@ -13,10 +13,6 @@ jobs:
         with:
           submodules: 'true'
 
-      # - name: Setup NuGet
-      #   run: |
-      #     dotnet nuget add source --name github --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
-
       - name: Restore dependencies
         run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
 
@@ -25,6 +21,8 @@ jobs:
 
       - name: Build Native Project with CMake (Release)
         run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
+      
+      - run: make -C Build/Release/x64
         
       - name: Build the project (Release)
         run: dotnet build OSPSuite.FuncParser.sln --configuration Release
