@@ -38,16 +38,16 @@ jobs:
         run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
       - name: Configure the native build (release)
-        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -BBuild/Release/arm64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
 
       - name: Configure the native build (debug)
-        run: cmake -BBuild/Debug/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -BBuild/Debug/arm64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
       
       - name: Build native libraries (release)
-        run: make -C Build/Release/x64
+        run: make -C Build/Release/arm64
 
       - name: Build native libraries (debug)
-        run: make -C Build/Debug/x64
+        run: make -C Build/Debug/arm64
         
       - name: Build the project (release)
         run: dotnet build OSPSuite.FuncParser.sln --configuration Release
@@ -125,7 +125,7 @@ jobs:
         run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
 
   build-linux-x64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
@@ -181,3 +181,4 @@ jobs:
 
       - name: Publish to GitHub registry
         run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+
