@@ -55,11 +55,8 @@ jobs:
       - name: Build the project (debug)
         run: dotnet build OSPSuite.FuncParser.sln --configuration Debug
 
-      - name: Test (release)
+      - name: Test
         run: dotnet test --configuration Release --no-build
-
-      - name: Test (debug)
-        run: dotnet test --configuration Debug --no-build
 
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
@@ -112,11 +109,8 @@ jobs:
       - name: Build the project (debug)
         run: dotnet build OSPSuite.FuncParser.sln --configuration Debug
 
-      - name: Test (release)
+      - name: Test
         run: dotnet test --configuration Release --no-build
-
-      - name: Test (debug)
-        run: dotnet test --configuration Debug --no-build
 
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
@@ -170,11 +164,8 @@ jobs:
       - name: Build the project (debug)
         run: dotnet build OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64
 
-      - name: Test (release)
+      - name: Test
         run: dotnet test --configuration Release --no-build
-
-      - name: Test (debug)
-        run: dotnet test --configuration Debug --no-build
 
       - name: Pack the project        
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
@@ -182,3 +173,38 @@ jobs:
       - name: Publish to GitHub registry
         run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
 
+  build-windows-x64:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: define env variables
+        run: |
+          echo "APP_VERSION=${{env.MAJOR}}.${{env.MINOR}}.${{env.RELEASE}}.${{ env.RUN }}" >> $GITHUB_ENV
+
+      - name: Restore dependencies
+        run: dotnet restore --source https://ci.appveyor.com/nuget/ospsuite-utility --source https://ci.appveyor.com/nuget/ospsuite-bddhelper --source https://www.nuget.org/api/v2/
+
+      - name: Update version.h
+        shell: pwsh
+        run: |
+          (get-content src\OSPSuite.FuncParserNative\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE $env:RELEASE" -replace "MAJOR 0", "MAJOR $env:MAJOR" -replace "MINOR 0", "MINOR $env:MINOR" -replace "BUILD 0", "BUILD $env:APPVEYOR_BUILD_NUMBER"} | set-content src\OSPSuite.FuncParserNative\version.h
+
+      - name: build release
+        run: msbuild OSPSuite.FuncParser.sln /property:Configuration=Release;Platform=x64
+
+      - name: build debug
+        run: msbuild OSPSuite.FuncParser.sln /property:Configuration=Debug;Platform=x64
+
+      - name: Test
+        run: dotnet test --no-build --no-restore
+
+      - name: Pack the project
+        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
+
+      - name: Publish to GitHub registry
+        run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/felixmil/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
