@@ -13,7 +13,7 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     outputs:
-      BUILD_ID: ${{ steps.get_build_number.outputs.BUILD_ID}}
+      BUILD_ID: ${{ steps.get_build_id.outputs.BUILD_ID}}
       APP_VERSION: ${{ steps.get_app_version.outputs.APP_VERSION}}
     steps:
       - name: Get New Build Number
@@ -106,6 +106,14 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
+      - name: Push nupkg as artefact
+        # if it is a push to a branch
+        if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
+        uses: actions/upload-artifact@v3
+        with:
+          name: nupkg
+          path: ./*.nupkg
+
       - name: Publish to GitHub registry
         # if it is a merge to default branch
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
@@ -163,6 +171,14 @@ jobs:
 
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
+
+      - name: Push nupkg as artefact
+        # if it is a push to a branch
+        if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
+        uses: actions/upload-artifact@v3
+        with:
+          name: nupkg
+          path: ./*.nupkg
 
       - name: Publish to GitHub registry
         # if it is a merge to default branch
@@ -223,6 +239,14 @@ jobs:
       - name: Pack the project        
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
+      - name: Push nupkg as artefact
+        # if it is a push to a branch
+        if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
+        uses: actions/upload-artifact@v3
+        with:
+          name: nupkg
+          path: ./*.nupkg
+
       - name: Publish to GitHub registry
         # if it is a merge to default branch
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
@@ -265,6 +289,14 @@ jobs:
 
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
+
+      - name: Push nupkg as artefact
+        # if it is a push to a branch
+        if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
+        uses: actions/upload-artifact@v3
+        with:
+          name: nupkg
+          path: ./*.nupkg
 
       - name: Publish to GitHub registry
         # if it is a merge to default branch
