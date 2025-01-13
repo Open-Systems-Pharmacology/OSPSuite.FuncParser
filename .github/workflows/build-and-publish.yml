@@ -1,7 +1,7 @@
 name: Build and Publish NuGet Package for all supported platforms
 
 on:
-  push
+  push:
   pull_request:
     branches:
     - master
