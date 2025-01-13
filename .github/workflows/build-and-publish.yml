@@ -38,7 +38,7 @@ jobs:
           if [[ "${{ github.event_name }}" == 'push' && "${{ github.ref_name }}" == "${{ github.event.repository.default_branch }}" ]]; then
             build_id="${incremented_version}"
           else
-            build_id="${incremented_version}.preview${{ env.RUN }}"
+            build_id="${incremented_version}-preview${{ env.RUN }}"
           fi
           
           echo "New Build ID: ${build_id}"
