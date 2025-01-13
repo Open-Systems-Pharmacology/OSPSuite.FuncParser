@@ -20,17 +20,29 @@ jobs:
         id: get_build_id
         shell: bash
         run: |
+          # Fetch the latest version from the NuGet package
           latest_version=$(curl -s -L \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/user/packages/nuget/OSPSuite.FuncParser/versions | \
-            jq -r '.[0].name' | awk -F. '{print $NF}')
-          
-          # Increment the last number of the version
-          incremented_version=$((latest_version + 1))
+            jq -r '.[0].name')
 
-          #print versions version
+          # Extract MAJOR, MINOR, and RELEASE from the latest version
+          IFS='.' read -r last_major last_minor last_release last_build <<< "$latest_version"
+
+          # Compare with the current MAJOR, MINOR, and RELEASE
+          if [[ "$last_major" -eq "${{ env.MAJOR }}" && "$last_minor" -eq "${{ env.MINOR }}" && "$last_release" -eq "${{ env.RELEASE }}" ]]; then
+            # If they match, increment the last number
+            incremented_version=$((last_build + 1))
+          else
+            # If the current version is different, reset build number to 0
+            incremented_version=0
+          fi
+
+          # Build the new build ID
+          build_id="${incremented_version}"
+          
           echo "latest build number:${latest_version}"
           echo "new build number: ${incremented_version}"
           
