@@ -123,7 +123,7 @@ jobs:
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
         uses: actions/upload-artifact@v3
         with:
-          name: nupkg
+          name: OSPSuite.FuncParser.MacOS.Arm64
           path: ./*.nupkg
 
       - name: Publish to GitHub registry
@@ -189,7 +189,7 @@ jobs:
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
         uses: actions/upload-artifact@v3
         with:
-          name: nupkg
+          name: OSPSuite.FuncParser.MacOS.x64
           path: ./*.nupkg
 
       - name: Publish to GitHub registry
@@ -256,7 +256,7 @@ jobs:
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
         uses: actions/upload-artifact@v3
         with:
-          name: nupkg
+          name: OSPSuite.FuncParser.Ubuntu22
           path: ./*.nupkg
 
       - name: Publish to GitHub registry
@@ -307,7 +307,7 @@ jobs:
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
         uses: actions/upload-artifact@v3
         with:
-          name: nupkg
+          name: OSPSuite.FuncParser
           path: ./*.nupkg
 
       - name: Publish to GitHub registry
