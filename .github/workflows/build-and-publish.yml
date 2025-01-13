@@ -31,16 +31,17 @@ jobs:
           incremented_version=$((latest_version + 1))
 
           #print versions version
-          echo ${latest_version}
-          echo ${incremented_version}
+          echo "latest build number:${latest_version}"
+          echo "new build number: ${incremented_version}"
           
           # Get the build ID
           if [[ "${{ github.event_name }}" == 'push' && "${{ github.ref_name }}" == "${{ github.event.repository.default_branch }}" ]]; then
-            build_id="${{ env.BUILD_NUMBER }}"
+            build_id="${incremented_version}"
           else
-            build_id="${{ env.BUILD_NUMBER }}.preview${{ env.RUN }}"
+            build_id="${incremented_version}.preview${{ env.RUN }}"
           fi
           
+          echo "New Build ID: ${build_id}"
           echo "BUILD_ID=${build_id}" >> $GITHUB_ENV
           echo "::set-output name=BUILD_ID::${build_id}"
       
@@ -49,6 +50,7 @@ jobs:
         shell: bash
         run: |
           app_version="${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.RELEASE }}.${{ env.BUILD_ID }}"
+          echo "App Version: ${app_version}"
           echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
           echo "::set-output name=APP_VERSION::${app_version}"
 
