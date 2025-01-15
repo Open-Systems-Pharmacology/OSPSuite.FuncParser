@@ -20,7 +20,7 @@
     <Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/x64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
   </Target>
 
-  <Target Name="PostBuildMacArm" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'A64'">
+  <Target Name="PostBuildMacArm" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
     <Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/Arm64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
   </Target>
 
