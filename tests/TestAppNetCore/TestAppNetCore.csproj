@@ -14,7 +14,7 @@
 	</Target>
   
   <Target Name="PostBuildMacArm64" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
-		<Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/arm64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
+		<Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/Arm64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
 	</Target>
 
 	<Target Name="PostBuildLinux" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
