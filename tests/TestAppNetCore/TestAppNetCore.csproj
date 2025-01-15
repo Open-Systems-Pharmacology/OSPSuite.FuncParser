@@ -9,8 +9,12 @@
     <Configurations>Debug;Release;Purify_Debug</Configurations>
   </PropertyGroup>
 
-	<Target Name="PostBuildMac" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+	<Target Name="PostBuildMacx64" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
 		<Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/x64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
+	</Target>
+  
+  <Target Name="PostBuildMacArm64" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+		<Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/arm64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
 	</Target>
 
 	<Target Name="PostBuildLinux" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Linux'))">

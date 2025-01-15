@@ -15,9 +15,9 @@
     <tags>open-systems-pharmacology</tags>
   </metadata>
   <files>
-    <file src="..\..\Build\Debug\x64\libOSPSuite.FuncParserNative.dylib" target="OSPSuite.FuncParserNative\bin\native\x64\Debug" />
+    <file src="..\..\Build\Debug\Arm64\libOSPSuite.FuncParserNative.dylib" target="OSPSuite.FuncParserNative\bin\native\Arm64\Debug" />
 
-    <file src="..\..\Build\Release\x64\libOSPSuite.FuncParserNative.dylib" target="OSPSuite.FuncParserNative\bin\native\x64\Release" />
+    <file src="..\..\Build\Release\Arm64\libOSPSuite.FuncParserNative.dylib" target="OSPSuite.FuncParserNative\bin\native\Arm64\Release" />
 
     <file src="bin\Release\netstandard2.0\OSPSuite.FuncParser.dll" target="lib\netstandard2.0" />
     <file src="bin\Release\netstandard2.0\OSPSuite.FuncParser.pdb" target="lib\netstandard2.0" />
