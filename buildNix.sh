@@ -3,8 +3,8 @@
 #call: buildNix.sh distributionName version
 # e.g. buildNix.sh CentOS7 4.0.0.49
 
-echo `uname -m`
-if [ `uname -m` == 'x86_64' ]; then
+if [ `uname -m` = 'x86_64' ]; 
+then
   ARCH=x64
 else
   ARCH=Arm64
