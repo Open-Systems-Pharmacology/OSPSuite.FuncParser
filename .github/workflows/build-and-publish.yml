@@ -129,10 +129,10 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser.MacOS.Arm64
           path: ./*.nupkg
@@ -195,10 +195,10 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser.MacOS.x64
           path: ./*.nupkg
@@ -262,10 +262,10 @@ jobs:
       - name: Pack the project        
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser.Ubuntu22
           path: ./*.nupkg
@@ -313,10 +313,10 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser
           path: ./*.nupkg
