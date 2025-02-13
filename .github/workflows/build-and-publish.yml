@@ -106,16 +106,16 @@ jobs:
         run: dotnet sln OSPSuite.FuncParser.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
       - name: Configure the native build (release)
-        run: cmake -BBuild/Release/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -BBuild/Release/Arm64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
 
       - name: Configure the native build (debug)
-        run: cmake -BBuild/Debug/x64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -BBuild/Debug/Arm64/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64
       
       - name: Build native libraries (release)
-        run: make -C Build/Release/x64
+        run: make -C Build/Release/Arm64
 
       - name: Build native libraries (debug)
-        run: make -C Build/Debug/x64
+        run: make -C Build/Debug/Arm64
         
       - name: Build the project (release)
         run: dotnet build OSPSuite.FuncParser.sln --configuration Release
@@ -129,10 +129,10 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser.MacOS.Arm64
           path: ./*.nupkg
@@ -195,10 +195,10 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser.MacOS.x64
           path: ./*.nupkg
@@ -262,10 +262,10 @@ jobs:
       - name: Pack the project        
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser.Ubuntu22
           path: ./*.nupkg
@@ -313,10 +313,10 @@ jobs:
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
 
-      - name: Push nupkg as artefact
+      - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OSPSuite.FuncParser
           path: ./*.nupkg
