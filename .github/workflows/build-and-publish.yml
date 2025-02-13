@@ -226,7 +226,7 @@ jobs:
         run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Debug /p:Platform=x64
 
       - name: Test
-        run: dotnet test --no-build --no-restore
+        run: dotnet test --no-build --no-restore --configuration:Release
 
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
