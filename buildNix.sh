@@ -19,13 +19,12 @@ cp -p -f OSPSuite.FuncParser.sln OSPSuite.FuncParser4Nix.sln
 
 dotnet sln OSPSuite.FuncParser4Nix.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
-cmake -BBuild/Release/$ARCH/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release
-make -C Build/Release/$ARCH
-dotnet build OSPSuite.FuncParser4Nix.sln /property:Configuration=Release
-
-cmake -BBuild/Debug/$ARCH/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Debug
-make -C Build/Debug/$ARCH
-dotnet build OSPSuite.FuncParser4Nix.sln /property:Configuration=Debug
+for BuildType in Debug Release 
+do 
+  cmake -BBuild/${BuildType}/$ARCH/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=${BuildType} 
+  make -C Build/${BuildType}/$ARCH 
+  dotnet build OSPSuite.FuncParser4Nix.sln /property:Configuration=${BuildType} 
+done
 
 dotnet test OSPSuite.FuncParser4Nix.sln --no-build --no-restore --configuration:Release #optionally: run tests
 
