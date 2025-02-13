@@ -66,7 +66,7 @@ jobs:
         
         echo "New Build ID: ${build_id}"
         echo "BUILD_ID=${build_id}" >> $GITHUB_ENV
-        echo "::set-output name=BUILD_ID::${build_id}"
+        echo "BUILD_ID=${build_id}" >> $GITHUB_OUTPUT
       
     - name: Get App Version
       id: get_app_version
@@ -75,7 +75,7 @@ jobs:
         app_version="${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.RELEASE }}.${{ env.BUILD_ID }}"
         echo "App Version: ${app_version}"
         echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
-        echo "::set-output name=APP_VERSION::${app_version}"
+        echo "APP_VERSION=${app_version}" >> $GITHUB_OUTPUT
 
   build-macos-arm64:
     runs-on: macos-latest
