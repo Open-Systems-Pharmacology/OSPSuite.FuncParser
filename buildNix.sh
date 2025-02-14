@@ -28,4 +28,4 @@ done
 
 dotnet test OSPSuite.FuncParser4Nix.sln --no-build --no-restore --configuration:Release
 
-dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=$2
+dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=$2 -o:./
