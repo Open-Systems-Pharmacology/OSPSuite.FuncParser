@@ -14,7 +14,6 @@ nuget restore packages.config -PackagesDirectory packages
 - Run tests with your favorite test runner
 
 ## Code Status
-[![NuGet version](https://img.shields.io/nuget/v/OSPSuite.FuncParser.svg?style=flat)](https://www.nuget.org/packages/OSPSuite.FuncParser)
 [![Build status](https://img.shields.io/github/actions/workflow/status/Open-Systems-Pharmacology/OSPSuite.FuncParser/build-and-publish.yml?logo=nuget&label=Build%20status)](https://github.com/Open-Systems-Pharmacology/OSPSuite.FuncParser/actions/workflows/build-and-publish.yml)
 
 ## Code of conduct
