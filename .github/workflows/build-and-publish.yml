@@ -126,6 +126,12 @@ jobs:
           name: ${{matrix.nuget_package}}
           path: ./*.nupkg
 
+      - name: Push test log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: testLog_${{matrix.os}}
+          path: ./**/testLog*.html
+
       - name: Publish to GitHub registry
         # if it is a merge to default branch
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
@@ -164,7 +170,7 @@ jobs:
         run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Debug /p:Platform=x64
 
       - name: Test
-        run: dotnet test --no-build --no-restore --configuration:Release
+        run: dotnet test --no-build --no-restore --configuration:Release --logger:"html;LogFileName=../../../testLog_Windows.html"
 
       - name: Pack the project
         run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
@@ -176,6 +182,12 @@ jobs:
         with:
           name: OSPSuite.FuncParser
           path: ./*.nupkg
+
+      - name: Push test log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: testLog_Windows
+          path: ./**/testLog*.html
 
       - name: Publish to GitHub registry
         # if it is a merge to default branch

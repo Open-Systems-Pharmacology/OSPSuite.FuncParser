@@ -26,6 +26,6 @@ do
   dotnet build OSPSuite.FuncParser4Nix.sln /property:Configuration=${BuildType} 
 done
 
-dotnet test OSPSuite.FuncParser4Nix.sln --no-build --no-restore --configuration:Release
+dotnet test OSPSuite.FuncParser4Nix.sln --no-build --no-restore --configuration:Release --logger:"html;LogFileName=../../../testLog_$1.html"
 
 dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=$2 -o:./
