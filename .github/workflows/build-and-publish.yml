@@ -69,7 +69,7 @@ jobs:
         echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
         echo "APP_VERSION=${app_version}" >> $GITHUB_OUTPUT
 
-  build-nix-matrix:
+  build-nix:
     strategy:
       matrix:
         include:
@@ -121,14 +121,6 @@ jobs:
 
       - name: Publish to GitHub registry
         run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/${{github.repository_owner}}/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
-
-  build-nix:
-    needs: build-nix-matrix
-    if: always()
-    runs-on: ${{ vars.GHA_DEFAULT_RUNNER_UBUNTU }}
-    steps:
-      - name: Aggregate matrix result
-        run: ${{ needs.build-nix-matrix.result == 'success' }}
 
   build-windows-x64:
     runs-on: ${{ vars.GHA_DEFAULT_RUNNER_WINDOWS }}

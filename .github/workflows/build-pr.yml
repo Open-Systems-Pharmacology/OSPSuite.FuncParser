@@ -16,7 +16,7 @@ env:
   RUN: ${{ github.run_number }}
 
 jobs:
-  build-nix-matrix:
+  build-nix:
     strategy:
       matrix:
         include:
@@ -64,14 +64,6 @@ jobs:
         with:
           name: testLog_${{matrix.os}}
           path: ./**/testLog*.html
-
-  build-nix:
-    needs: build-nix-matrix
-    if: always()
-    runs-on: ${{ vars.GHA_DEFAULT_RUNNER_UBUNTU }}
-    steps:
-      - name: Aggregate matrix result
-        run: ${{ needs.build-nix-matrix.result == 'success' }}
 
   build-windows-x64:
     runs-on: ${{ vars.GHA_DEFAULT_RUNNER_WINDOWS }}
