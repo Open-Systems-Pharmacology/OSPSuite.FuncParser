@@ -2,18 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <AssemblyName>TestAppNetCore</AssemblyName>
     <RootNamespace>TestAppNetCore</RootNamespace>
     <Configurations>Debug;Release;Purify_Debug</Configurations>
   </PropertyGroup>
 
-	<Target Name="PostBuildMacx64" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
-		<Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/x64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
-	</Target>
-  
-  <Target Name="PostBuildMacArm64" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
+  <Target Name="PostBuildMacArm64" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
 		<Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/Arm64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
 	</Target>
 

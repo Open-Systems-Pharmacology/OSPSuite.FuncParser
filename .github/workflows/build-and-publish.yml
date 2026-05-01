@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 env:
-  MAJOR: 4
+  MAJOR: 5
   MINOR: 0
   RELEASE: 0
   RUN: ${{ github.run_number }}
@@ -87,10 +87,6 @@ jobs:
             platform: MacOS
             nuget_package: OSPSuite.FuncParser.MacOS.Arm64
             version_h_modifier: "sed -i ''"
-          - os: macos-13
-            platform: MacOS
-            nuget_package: OSPSuite.FuncParser.MacOS.x64
-            version_h_modifier: "sed -i ''"
           - os: ubuntu-22.04
             platform: ${{ vars.GHA_DEFAULT_RUNNER_UBUNTU }}
             nuget_package: OSPSuite.FuncParser.Ubuntu22
@@ -100,7 +96,7 @@ jobs:
     needs: get-version
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: 'true'
 
@@ -117,6 +113,11 @@ jobs:
               -e "s@BUILD 0@BUILD ${{ env.BUILD_ID }}@g" \
               src/OSPSuite.FuncParserNative/version.h
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
       - name: Add OSP NuGet Source
         run: |
           dotnet nuget add source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"  --name OSP-GitHub-Packages --username Open-Systems-Pharmacology --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
@@ -127,13 +128,13 @@ jobs:
       - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{matrix.nuget_package}}
           path: ./*.nupkg
 
       - name: Push test log as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: testLog_${{matrix.os}}
           path: ./**/testLog*.html
@@ -149,7 +150,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: 'true'
 
@@ -171,7 +172,12 @@ jobs:
           (get-content src\OSPSuite.FuncParserNative\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE ${{env.RELEASE}}" -replace "MAJOR 0", "MAJOR ${{env.MAJOR}}" -replace "MINOR 0", "MINOR ${{env.MINOR}}" -replace "BUILD 0", "BUILD ${{ env.BUILD_ID }}" } | set-content src\OSPSuite.FuncParserNative\version.h
 
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
 
       - name: build release
         run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Release /p:Platform=x64
@@ -188,13 +194,13 @@ jobs:
       - name: Push nupkg as artifact
         # if it is a push to a branch
         if: github.event_name == 'push' && github.ref_name != github.event.repository.default_branch
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: OSPSuite.FuncParser
           path: ./*.nupkg
 
       - name: Push test log as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: testLog_Windows
           path: ./**/testLog*.html

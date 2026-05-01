@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>OSPSuite.FuncParser</AssemblyName>
     <Version>1.0.0</Version>
     <PackageVersion>1.0.0</PackageVersion>
@@ -31,16 +31,12 @@
     <NuspecFile>OSPSuite.FuncParserUbuntu22.nuspec</NuspecFile> 
   </PropertyGroup>
 
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
-    <NuspecFile>OSPSuite.FuncParserMacOSx64.nuspec</NuspecFile> 
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
-    <NuspecFile>OSPSuite.FuncParserMacOSArm64.nuspec</NuspecFile> 
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <NuspecFile>OSPSuite.FuncParserMacOSArm64.nuspec</NuspecFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.4" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.6" />
   </ItemGroup>
 
 </Project>

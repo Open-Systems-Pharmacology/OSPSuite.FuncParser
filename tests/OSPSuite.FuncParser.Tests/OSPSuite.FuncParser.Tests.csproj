@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <RootNamespace>OSPSuite.FuncParser.Tests</RootNamespace>
@@ -10,17 +10,13 @@
     <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
+    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.FuncParser\OSPSuite.FuncParser.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuildMacx64" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
-    <Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/x64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
-  </Target>
-
-  <Target Name="PostBuildMacArm" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
+  <Target Name="PostBuildMacArm" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <Exec Command="cp '$(SolutionDir)Build/$(ConfigurationName)/Arm64/libOSPSuite.FuncParserNative.dylib' '$(ProjectDir)$(OutDir)'" />
   </Target>
 
