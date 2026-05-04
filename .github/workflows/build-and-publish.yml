@@ -146,9 +146,6 @@ jobs:
         run: |
           dotnet nuget add source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"  --name OSP-GitHub-Packages --username Open-Systems-Pharmacology --password ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Restore dependencies
-        run: dotnet restore
-
       - name: Update version.h
         shell: pwsh
         run: |
@@ -157,17 +154,32 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v3
 
-      - name: build release
-        run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Release /p:Platform=x64
+      - name: Build native (Release)
+        run: msbuild src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=${{ github.workspace }}\
 
-      - name: build debug
-        run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Debug /p:Platform=x64
+      - name: Build native (Debug)
+        run: msbuild src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:SolutionDir=${{ github.workspace }}\
+
+      - name: Create .NET-only solution
+        shell: pwsh
+        run: |
+          Copy-Item OSPSuite.FuncParser.sln OSPSuite.FuncParser.NetOnly.sln
+          dotnet sln OSPSuite.FuncParser.NetOnly.sln remove src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj
+
+      - name: Restore .NET projects
+        run: dotnet restore OSPSuite.FuncParser.NetOnly.sln
+
+      - name: Build managed (Release)
+        run: dotnet build OSPSuite.FuncParser.NetOnly.sln --configuration Release --no-restore
+
+      - name: Build managed (Debug)
+        run: dotnet build OSPSuite.FuncParser.NetOnly.sln --configuration Debug --no-restore
 
       - name: Test
-        run: dotnet test --no-build --no-restore --configuration:Release --logger:"html;LogFileName=../../../testLog_Windows.html"
+        run: dotnet test OSPSuite.FuncParser.NetOnly.sln --no-build --no-restore --configuration Release --logger:"html;LogFileName=../../../testLog_Windows.html"
 
       - name: Pack the project
-        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}}
+        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}} --no-build --no-restore --configuration Release
 
       - name: Push test log as artifact
         uses: actions/upload-artifact@v7
