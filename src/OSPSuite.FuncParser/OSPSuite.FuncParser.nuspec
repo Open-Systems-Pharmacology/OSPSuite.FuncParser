@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>    
-    <description>Function Parser</description>
+<package>
+  <metadata>
+    <description>Function Parser for numeric and logic expressions</description>
     <id>OSPSuite.FuncParser</id>
     <version>$version$</version>
     <title>OSPSuite.FuncParser</title>
@@ -23,20 +23,15 @@
     <file src="..\..\LICENSE" />
     <file src="..\..\logo.png" />
 
-    <file src="..\..\Build\Debug\x64\OSPSuite.FuncParserNative.dll" target="OSPSuite.FuncParserNative\bin\native\x64\Debug" />
-    <file src="..\..\Build\Debug\x64\OSPSuite.FuncParserNative.lib" target="OSPSuite.FuncParserNative\bin\native\x64\Debug" />
-    <file src="..\..\Build\Debug\x64\OSPSuite.FuncParserNative.pdb" target="OSPSuite.FuncParserNative\bin\native\x64\Debug" />
- 
-    <file src="..\..\Build\Release\x64\OSPSuite.FuncParserNative.dll" target="OSPSuite.FuncParserNative\bin\native\x64\Release" />
-    <file src="..\..\Build\Release\x64\OSPSuite.FuncParserNative.lib" target="OSPSuite.FuncParserNative\bin\native\x64\Release" />
-    <file src="..\..\Build\Release\x64\OSPSuite.FuncParserNative.pdb" target="OSPSuite.FuncParserNative\bin\native\x64\Release" />
-
     <file src="bin\Release\net10.0\OSPSuite.FuncParser.dll" target="lib\net10.0" />
     <file src="bin\Release\net10.0\OSPSuite.FuncParser.pdb" target="lib\net10.0" />
+
+    <file src="..\..\runtimes\win-x64\native\OSPSuite.FuncParserNative.dll" target="runtimes\win-x64\native" />
+    <file src="..\..\runtimes\linux-x64\native\libOSPSuite.FuncParserNative.so" target="runtimes\linux-x64\native" />
+    <file src="..\..\runtimes\osx-arm64\native\libOSPSuite.FuncParserNative.dylib" target="runtimes\osx-arm64\native" />
 
     <file src="..\OSPSuite.FuncParserNative\include\**\*.h" target="OSPSuite.FuncParserNative\include" />
     <file src="..\OSPSuite.FuncParserNative\src\**\*.*" target="OSPSuite.FuncParserNative\src" />
     <file src="..\OSPSuite.FuncParserNative\*.*" target="OSPSuite.FuncParserNative" exclude="..\OSPSuite.FuncParserNative\*.vcxproj*" />
-
   </files>
 </package>

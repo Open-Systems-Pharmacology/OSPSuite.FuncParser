@@ -12,14 +12,12 @@ env:
   MAJOR: 5
   MINOR: 0
   RELEASE: 0
-  RUN: ${{ github.run_number }}
 
 jobs:
   get-version:
     runs-on: ${{ vars.GHA_DEFAULT_RUNNER_UBUNTU }}
     outputs:
-      BUILD_ID: ${{ steps.get_build_id.outputs.BUILD_ID}}
-      APP_VERSION: ${{ steps.get_app_version.outputs.APP_VERSION}}
+      APP_VERSION: ${{ steps.get_app_version.outputs.APP_VERSION }}
     steps:
     - name: Get New Build Number
       id: get_build_id
@@ -58,7 +56,6 @@ jobs:
         echo "latest build number: ${latest_version:-'None found'}"
         echo "new build number: ${new_build_id}"
         echo "BUILD_ID=${new_build_id}" >> $GITHUB_ENV
-        echo "BUILD_ID=${new_build_id}" >> $GITHUB_OUTPUT
 
     - name: Get App Version
       id: get_app_version
@@ -66,128 +63,12 @@ jobs:
       run: |
         app_version="${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.RELEASE }}.${{ env.BUILD_ID }}"
         echo "App Version: ${app_version}"
-        echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
         echo "APP_VERSION=${app_version}" >> $GITHUB_OUTPUT
 
-  build-nix:
-    strategy:
-      matrix:
-        include:
-          - os: ${{ vars.GHA_DEFAULT_RUNNER_MACOS }}
-            platform: MacOS
-            version_h_modifier: "sed -i ''"
-          - os: ubuntu-22.04
-            platform: ${{ vars.GHA_DEFAULT_RUNNER_UBUNTU }}
-            version_h_modifier: "sed -i"
-
-    runs-on: ${{ matrix.os }}
+  build:
     needs: get-version
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          submodules: 'true'
-
-      - name: define env variables
-        run: |
-          echo "APP_VERSION=${{needs.get-version.outputs.APP_VERSION}}" >> $GITHUB_ENV
-          echo "BUILD_ID=${{needs.get-version.outputs.BUILD_ID}}" >> $GITHUB_ENV
-
-      - name: Update version.h
-        run: |
-          LC_ALL=C ${{ matrix.version_h_modifier }} -e "s@RELEASE 0@RELEASE ${{env.RELEASE}}@g" \
-              -e "s@MAJOR 0@MAJOR ${{env.MAJOR}}@g" \
-              -e "s@MINOR 0@MINOR ${{env.MINOR}}@g" \
-              -e "s@BUILD 0@BUILD ${{ env.BUILD_ID }}@g" \
-              src/OSPSuite.FuncParserNative/version.h
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.x
-
-      - name: Add OSP NuGet Source
-        run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"  --name OSP-GitHub-Packages --username Open-Systems-Pharmacology --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
-
-      - name: Build Debug and Release
-        run: ./buildNix.sh ${{matrix.platform}}  ${{env.APP_VERSION}}
-
-      - name: Push test log as artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: testLog_${{matrix.os}}
-          path: ./**/testLog*.html
-
-      - name: Publish to GitHub registry
-        run: dotnet nuget push ./*.nupkg --source https://nuget.pkg.github.com/${{github.repository_owner}}/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
-
-  build-windows-x64:
-    runs-on: ${{ vars.GHA_DEFAULT_RUNNER_WINDOWS }}
-    needs: get-version
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          submodules: 'true'
-
-      - name: define env variables
-        run: |
-          echo "APP_VERSION=${{needs.get-version.outputs.APP_VERSION}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "BUILD_ID=${{needs.get-version.outputs.BUILD_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.x
-
-      - name: Add OSP NuGet Source
-        run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"  --name OSP-GitHub-Packages --username Open-Systems-Pharmacology --password ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update version.h
-        shell: pwsh
-        run: |
-          (get-content src\OSPSuite.FuncParserNative\version.h) | foreach-object {$_ -replace "RELEASE 0", "RELEASE ${{env.RELEASE}}" -replace "MAJOR 0", "MAJOR ${{env.MAJOR}}" -replace "MINOR 0", "MINOR ${{env.MINOR}}" -replace "BUILD 0", "BUILD ${{ env.BUILD_ID }}" } | set-content src\OSPSuite.FuncParserNative\version.h
-
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v3
-
-      # The C++ vcxproj is built with the VS-bundled MSBuild, while the .NET
-      # projects are built with the SDK installed by setup-dotnet. This keeps
-      # the .NET version we target independent of whichever Visual Studio
-      # version ships on the GitHub-hosted runner image.
-      - name: Build native (Release)
-        run: msbuild src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=${{ github.workspace }}\
-
-      - name: Build native (Debug)
-        run: msbuild src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:SolutionDir=${{ github.workspace }}\
-
-      - name: Create .NET-only solution
-        shell: pwsh
-        run: |
-          Copy-Item OSPSuite.FuncParser.sln OSPSuite.FuncParser.NetOnly.sln
-          dotnet sln OSPSuite.FuncParser.NetOnly.sln remove src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj
-
-      - name: Restore .NET projects
-        run: dotnet restore OSPSuite.FuncParser.NetOnly.sln
-
-      - name: Build managed (Release)
-        run: dotnet build OSPSuite.FuncParser.NetOnly.sln --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test OSPSuite.FuncParser.NetOnly.sln --no-build --no-restore --configuration Release --logger:"html;LogFileName=../../../testLog_Windows.html"
-
-      - name: Pack the project
-        run: dotnet pack src/OSPSuite.FuncParser/ -o ./ -p:PackageVersion=${{env.APP_VERSION}} --no-build --no-restore --configuration Release
-
-      - name: Push test log as artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: testLog_Windows
-          path: ./**/testLog*.html
-
-      - name: Publish to GitHub registry
-        shell: pwsh
-        run: dotnet nuget push .\OSPSuite.FuncParser*.nupkg --source https://nuget.pkg.github.com/${{github.repository_owner}}/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/_build.yml
+    with:
+      app_version: ${{ needs.get-version.outputs.APP_VERSION }}
+      publish: true
+    secrets: inherit

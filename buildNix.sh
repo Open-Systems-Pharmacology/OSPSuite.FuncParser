@@ -1,31 +1,49 @@
 #! /bin/sh
 
-#call: buildNix.sh distributionName version
-# e.g. buildNix.sh CentOS7 4.0.0.49
+# Build the native library and run the .NET tests on Linux or macOS.
+#
+# Usage: buildNix.sh distributionName
+#   e.g. buildNix.sh Linux
+#
+# distributionName is only used to name the test log file (testLog_$1.html).
+# Packing the unified multi-RID NuGet package is done in the dedicated CI
+# pack-and-publish job, not here, because it requires natives from all three
+# platforms to be present under runtimes/.
 
-if [ `uname -m` = 'x86_64' ]; 
-then
+set -e
+
+if [ "$(uname -m)" = 'x86_64' ]; then
   ARCH=x64
 else
   ARCH=Arm64
 fi
 
-rm -f OSPSuite.FuncParser4Nix.sln
+if [ "$(uname)" = 'Darwin' ]; then
+  RID=osx-arm64
+  NATIVE_FILE=libOSPSuite.FuncParserNative.dylib
+else
+  RID=linux-x64
+  NATIVE_FILE=libOSPSuite.FuncParserNative.so
+fi
 
-dotnet restore
+# Build native (Release only — the runtimes/<rid>/native/ NuGet convention has no
+# Debug/Release axis; consumers needing native debugging build from the source
+# shipped in the package under OSPSuite.FuncParserNative/src/ and include/).
+cmake -BBuild/Release/$ARCH/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=Release
+make -C Build/Release/$ARCH
 
-# copy the original solution file because it will be modified for dotnet build
-cp -p -f OSPSuite.FuncParser.sln OSPSuite.FuncParser4Nix.sln
+# Stage the native binary at runtimes/<rid>/native/ — the canonical location read
+# by both OSPSuite.FuncParser.csproj (for in-repo tests) and the unified nuspec
+# (for packing).
+mkdir -p runtimes/$RID/native
+cp Build/Release/$ARCH/$NATIVE_FILE runtimes/$RID/native/
 
-dotnet sln OSPSuite.FuncParser4Nix.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
+# Build managed projects via a .NET-only solution (the C++ vcxproj is not
+# buildable with `dotnet`).
+rm -f OSPSuite.FuncParser.NetOnly.sln
+cp -p -f OSPSuite.FuncParser.sln OSPSuite.FuncParser.NetOnly.sln
+dotnet sln OSPSuite.FuncParser.NetOnly.sln remove src/OSPSuite.FuncParserNative/OSPSuite.FuncParserNative.vcxproj
 
-for BuildType in Debug Release 
-do 
-  cmake -BBuild/${BuildType}/$ARCH/ -Hsrc/OSPSuite.FuncParserNative/ -DCMAKE_BUILD_TYPE=${BuildType} 
-  make -C Build/${BuildType}/$ARCH 
-  dotnet build OSPSuite.FuncParser4Nix.sln /property:Configuration=${BuildType} 
-done
-
-dotnet test OSPSuite.FuncParser4Nix.sln --no-build --no-restore --configuration:Release --logger:"html;LogFileName=../../../testLog_$1.html"
-
-dotnet pack src/OSPSuite.FuncParser/ -p:PackageVersion=$2 -o:./
+dotnet restore OSPSuite.FuncParser.NetOnly.sln
+dotnet build OSPSuite.FuncParser.NetOnly.sln --configuration Release --no-restore
+dotnet test OSPSuite.FuncParser.NetOnly.sln --no-build --no-restore --configuration Release --logger:"html;LogFileName=../../../testLog_$1.html"
