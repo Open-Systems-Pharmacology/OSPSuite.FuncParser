@@ -154,6 +154,10 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v3
 
+      # The C++ vcxproj is built with the VS-bundled MSBuild, while the .NET
+      # projects are built with the SDK installed by setup-dotnet. This keeps
+      # the .NET version we target independent of whichever Visual Studio
+      # version ships on the GitHub-hosted runner image.
       - name: Build native (Release)
         run: msbuild src\OSPSuite.FuncParserNative\OSPSuite.FuncParserNative.vcxproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=${{ github.workspace }}\
 
