@@ -19,6 +19,8 @@
     <Product>OSPSuite FuncParser</Product>
     <Configurations>Debug;Release;Purify_Debug</Configurations>
     <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
+    <!-- Suppress NU5100 because the native binaries ship outside lib/ by design. See #79 for the planned migration to runtimes/<rid>/native/. -->
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
