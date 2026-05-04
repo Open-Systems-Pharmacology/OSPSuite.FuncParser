@@ -13,6 +13,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright © 2024 - Open Systems Pharmacology Community</copyright>
     <tags>open-systems-pharmacology</tags>
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="OSPSuite.Utility" version="5.0.0.6" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
     <file src="..\..\LICENSE" />
