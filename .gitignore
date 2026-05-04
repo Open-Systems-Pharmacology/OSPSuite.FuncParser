@@ -251,6 +251,8 @@ paket-files/
 .idea/
 *.sln.iml
 Build
+runtimes/
+OSPSuite.FuncParser.NetOnly.sln
 /src/OSPSuite.FuncParser/ReleaseX64
 /tests/OSPSuite.FuncParser.Tests/ReleaseX64
 /00/*.7z

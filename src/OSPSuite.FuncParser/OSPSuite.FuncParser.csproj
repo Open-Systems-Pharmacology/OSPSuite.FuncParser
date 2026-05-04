@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -18,26 +18,41 @@
     <Copyright>© Open Systems Pharmacology Community 2025</Copyright>
     <Product>OSPSuite FuncParser</Product>
     <Configurations>Debug;Release;Purify_Debug</Configurations>
+    <NuspecFile>OSPSuite.FuncParser.nuspec</NuspecFile>
     <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
-    <!-- Suppress NU5100 because the native binaries ship outside lib/ by design. See #79 for the planned migration to runtimes/<rid>/native/. -->
-    <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <DefineConstants>_WINDOWS</DefineConstants>
-    <NuspecFile>OSPSuite.FuncParser.nuspec</NuspecFile> 
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-    <NuspecFile>OSPSuite.FuncParserUbuntu22.nuspec</NuspecFile> 
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
-    <NuspecFile>OSPSuite.FuncParserMacOSArm64.nuspec</NuspecFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="OSPSuite.Utility" Version="5.0.0.6" />
+  </ItemGroup>
+
+  <!-- Surface the current-OS native binary as content so it propagates to projects that
+       reference this one (tests, samples). The file is produced by the C++ build into
+       runtimes/<rid>/native/ before this project is built (see buildNix.sh and the
+       Windows native build step in the CI workflows). -->
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\OSPSuite.FuncParserNative.dll"
+             Condition="$([MSBuild]::IsOSPlatform('Windows')) And Exists('$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\OSPSuite.FuncParserNative.dll')"
+             Link="OSPSuite.FuncParserNative.dll"
+             CopyToOutputDirectory="PreserveNewest"
+             Pack="false"
+             Visible="false" />
+    <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\linux-x64\native\libOSPSuite.FuncParserNative.so"
+             Condition="$([MSBuild]::IsOSPlatform('Linux')) And Exists('$(MSBuildThisFileDirectory)..\..\runtimes\linux-x64\native\libOSPSuite.FuncParserNative.so')"
+             Link="libOSPSuite.FuncParserNative.so"
+             CopyToOutputDirectory="PreserveNewest"
+             Pack="false"
+             Visible="false" />
+    <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\osx-arm64\native\libOSPSuite.FuncParserNative.dylib"
+             Condition="$([MSBuild]::IsOSPlatform('OSX')) And Exists('$(MSBuildThisFileDirectory)..\..\runtimes\osx-arm64\native\libOSPSuite.FuncParserNative.dylib')"
+             Link="libOSPSuite.FuncParserNative.dylib"
+             CopyToOutputDirectory="PreserveNewest"
+             Pack="false"
+             Visible="false" />
   </ItemGroup>
 
 </Project>
