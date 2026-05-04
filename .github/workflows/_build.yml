@@ -27,8 +27,8 @@ jobs:
             rid: osx-arm64
             native_file: libOSPSuite.FuncParserNative.dylib
             version_h_modifier: "sed -i ''"
-          - os: ubuntu-22.04
-            platform: ${{ vars.GHA_DEFAULT_RUNNER_UBUNTU }}
+          - os: ${{ vars.GHA_DEFAULT_RUNNER_UBUNTU }}
+            platform: Linux
             rid: linux-x64
             native_file: libOSPSuite.FuncParserNative.so
             version_h_modifier: "sed -i"
