@@ -137,6 +137,11 @@ jobs:
           echo "APP_VERSION=${{needs.get-version.outputs.APP_VERSION}}" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "BUILD_ID=${{needs.get-version.outputs.BUILD_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
       - name: Add OSP NuGet Source
         run: |
           dotnet nuget add source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"  --name OSP-GitHub-Packages --username Open-Systems-Pharmacology --password ${{ secrets.GITHUB_TOKEN }}
@@ -151,11 +156,6 @@ jobs:
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.x
 
       - name: build release
         run: msbuild OSPSuite.FuncParser.sln /p:Configuration=Release /p:Platform=x64
