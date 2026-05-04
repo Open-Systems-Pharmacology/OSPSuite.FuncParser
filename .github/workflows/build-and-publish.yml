@@ -172,9 +172,6 @@ jobs:
       - name: Build managed (Release)
         run: dotnet build OSPSuite.FuncParser.NetOnly.sln --configuration Release --no-restore
 
-      - name: Build managed (Debug)
-        run: dotnet build OSPSuite.FuncParser.NetOnly.sln --configuration Debug --no-restore
-
       - name: Test
         run: dotnet test OSPSuite.FuncParser.NetOnly.sln --no-build --no-restore --configuration Release --logger:"html;LogFileName=../../../testLog_Windows.html"
 
