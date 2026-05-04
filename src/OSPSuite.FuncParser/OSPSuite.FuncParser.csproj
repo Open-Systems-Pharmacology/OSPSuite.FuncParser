@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>OSPSuite.FuncParser</AssemblyName>
     <Version>1.0.0</Version>
     <PackageVersion>1.0.0</PackageVersion>
@@ -9,7 +9,6 @@
     <FileVersion>1.0.0</FileVersion>
     <InformationalVersion>1.0.0.0</InformationalVersion>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.FuncParser</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.FuncParser</RepositoryUrl>
     <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
     <Description>Function Parser for numeric and logic expressions</Description>
@@ -20,6 +19,8 @@
     <Product>OSPSuite FuncParser</Product>
     <Configurations>Debug;Release;Purify_Debug</Configurations>
     <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
+    <!-- Suppress NU5100 because the native binaries ship outside lib/ by design. See #79 for the planned migration to runtimes/<rid>/native/. -->
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
@@ -31,16 +32,12 @@
     <NuspecFile>OSPSuite.FuncParserUbuntu22.nuspec</NuspecFile> 
   </PropertyGroup>
 
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
-    <NuspecFile>OSPSuite.FuncParserMacOSx64.nuspec</NuspecFile> 
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
-    <NuspecFile>OSPSuite.FuncParserMacOSArm64.nuspec</NuspecFile> 
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <NuspecFile>OSPSuite.FuncParserMacOSArm64.nuspec</NuspecFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.4" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.6" />
   </ItemGroup>
 
 </Project>
