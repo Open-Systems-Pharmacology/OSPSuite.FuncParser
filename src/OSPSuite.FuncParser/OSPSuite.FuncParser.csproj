@@ -9,7 +9,6 @@
     <FileVersion>1.0.0</FileVersion>
     <InformationalVersion>1.0.0.0</InformationalVersion>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.FuncParser</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.FuncParser</RepositoryUrl>
     <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
     <Description>Function Parser for numeric and logic expressions</Description>
