@@ -191,6 +191,10 @@
       <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D "$(OutDir)OSPSuite.FuncParserNative.dll" "$(SolutionDir)runtimes\win-x64\native\" &amp; xcopy /Y /D "$(OutDir)OSPSuite.FuncParserNative.pdb" "$(SolutionDir)runtimes\win-x64\native\"</Command>
+      <Message>Copying native DLL and PDB to runtimes\win-x64\native\ for .NET projects</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Purify_Debug|x64'">
     <ClCompile>
@@ -218,6 +222,10 @@
       <AssemblyDebug>true</AssemblyDebug>
       <AdditionalOptions>/fixed:no %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D "$(OutDir)OSPSuite.FuncParserNative.dll" "$(SolutionDir)runtimes\win-x64\native\" &amp; xcopy /Y /D "$(OutDir)OSPSuite.FuncParserNative.pdb" "$(SolutionDir)runtimes\win-x64\native\"</Command>
+      <Message>Copying native DLL and PDB to runtimes\win-x64\native\ for .NET projects</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -309,6 +317,10 @@
       <EnableUAC>false</EnableUAC>
       <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D "$(OutDir)OSPSuite.FuncParserNative.dll" "$(SolutionDir)runtimes\win-x64\native\" &amp; xcopy /Y /D "$(OutDir)OSPSuite.FuncParserNative.pdb" "$(SolutionDir)runtimes\win-x64\native\"</Command>
+      <Message>Copying native DLL and PDB to runtimes\win-x64\native\ for .NET projects</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
