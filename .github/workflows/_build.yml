@@ -125,12 +125,14 @@ jobs:
 
       # The .lib import library is shipped alongside the .dll so downstream
       # C++ consumers (OSPSuite.SimModel) can link against FuncParserNative.
+      # The .pdb ships so consumers can debug into the native code.
       - name: Stage Windows native at runtimes/win-x64/native/
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path runtimes\win-x64\native | Out-Null
           Copy-Item Build\Release\x64\OSPSuite.FuncParserNative.dll runtimes\win-x64\native\
           Copy-Item Build\Release\x64\OSPSuite.FuncParserNative.lib runtimes\win-x64\native\
+          Copy-Item Build\Release\x64\OSPSuite.FuncParserNative.pdb runtimes\win-x64\native\
 
       - name: Download linux-x64 native
         uses: actions/download-artifact@v7
